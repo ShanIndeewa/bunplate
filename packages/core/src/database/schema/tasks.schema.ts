@@ -8,3 +8,7 @@ export const tasks = pgTable("tasks", {
   done: boolean("done").notNull().default(false),
   ...timestamps
 });
+
+export const task = pgTable("task",{
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity()
+});
