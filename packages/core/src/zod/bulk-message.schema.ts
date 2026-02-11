@@ -1,39 +1,69 @@
-
 import { z } from "zod";
 
-import { bulkMessage } from "../database/schema/bulk-message.schema";
+/* ======================================================
+   Base Schema (manual, NOT drizzle table)
+====================================================== */
 
-export const bulkMessageSchema = z.object(bulkMessage);
+export const bulkMessageSchema = z.object({
+  id: z.string(),
 
-export const bulkMessageInsertSchema = z.object(bulkMessage).omit({
+  userId: z.string(),
+
+  createdAt: z.string(), // or z.date()
+  updatedAt: z.string(),
+
+  status: z.enum(["pending", "sent", "failed"]),
+
+  note: z.string(),
+
+  phoneNumber: z.string(),
+
+  whatsappNumber: z.string(),
+});
+
+/* ======================================================
+   Insert
+====================================================== */
+
+export const bulkMessageInsertSchema = bulkMessageSchema.omit({
   id: true,
   updatedAt: true,
   createdAt: true,
   status: true,
-  userId: true, // userId will be added from session
+  userId: true,
 });
 
-export const bulkMessageUpdateSchema = z.object(bulkMessage)
-  .omit({
-    id: true,
-    userId: true,
-    createdAt: true,
-    updatedAt: true,
-  })
-  .partial();
+/* ======================================================
+   Update
+====================================================== */
 
-// Bulk import schema
+export const bulkMessageUpdateSchema = bulkMessageInsertSchema
+  .partial()
+  .extend({
+    status: z.enum(["pending", "sent", "failed"]).optional(),
+  });
+
+/* ======================================================
+   Bulk Import
+====================================================== */
+
 export const bulkMessageBulkImportSchema = z.object({
-  records: z.array(
-    z.object({
-      note: z.string().min(1, "Note is required"),
-      phoneNumber: z.string().min(1, "Phone number is required"),
-      whatsappNumber: z.string().min(1, "WhatsApp number is required"),
-    })
-  ).min(1, "At least one record is required"),
+  records: z
+    .array(
+      z.object({
+        note: z.string().min(1, "Note is required"),
+        phoneNumber: z.string().min(1, "Phone number is required"),
+        whatsappNumber: z.string().min(1, "WhatsApp number is required"),
+      })
+    )
+    .min(1, "At least one record is required"),
 });
 
-export type bulkMessageUpdateType = z.infer<typeof bulkMessageUpdateSchema>;
-export type bulkMessage = z.infer<typeof bulkMessageSchema>;
-export type bulkMessageInsertType = z.infer<typeof bulkMessageInsertSchema>;
-export type bulkMessageBulkImportType = z.infer<typeof bulkMessageBulkImportSchema>;
+/* ======================================================
+   TYPES (PascalCase only)
+====================================================== */
+
+export type BulkMessage = z.infer<typeof bulkMessageSchema>;
+export type BulkMessageInsert = z.infer<typeof bulkMessageInsertSchema>;
+export type BulkMessageUpdate = z.infer<typeof bulkMessageUpdateSchema>;
+export type BulkMessageBulkImport = z.infer<typeof bulkMessageBulkImportSchema>;

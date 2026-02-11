@@ -12,6 +12,7 @@ import type {
     ListRoute,
     RemoveRoute,
     UpdateRoute,
+    BulkImportRoute,
 } from "@/routes/bulk-message.routes";
 
 // 🔍 List all bulk messages

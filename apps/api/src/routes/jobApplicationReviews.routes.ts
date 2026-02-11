@@ -10,7 +10,7 @@ import {
   stringIdParamSchema,
 } from "../../../../packages/core/src/zod/helpers";
 import {
-  jobApplicationReview,
+  jobApplicationReviewSchema,
   jobApplicationReviewInsertSchema,
   jobApplicationReviewUpdateSchema,
 } from "../../../../packages/core/src/zod/jobApplicationReviews.schema";
@@ -28,7 +28,7 @@ export const list = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      getPaginatedSchema(z.array(jobApplicationReview)),
+      getPaginatedSchema(z.array(jobApplicationReviewSchema)),
       "The list of job application reviews"
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
@@ -49,7 +49,7 @@ export const getById = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      jobApplicationReview,
+      jobApplicationReviewSchema,
       "The job application review item"
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
@@ -77,7 +77,7 @@ export const create = createRoute({
   },
   responses: {
     [HttpStatusCodes.CREATED]: jsonContent(
-      jobApplicationReview,
+      jobApplicationReviewSchema,
       "The created job application review"
     ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
@@ -102,7 +102,7 @@ export const update = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      jobApplicationReview,
+      jobApplicationReviewSchema,
       "The updated job application review"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(errorMessageSchema, "Not found"),
