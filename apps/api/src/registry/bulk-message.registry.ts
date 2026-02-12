@@ -1,6 +1,6 @@
 import { createAPIRouter } from "@/lib/setup-api";
 
-// import * as handlers from "../handlers/b.handlers";
+import * as handlers from "../handlers/bulk-message.handler";
 import * as routes from "../routes/bulk-message.routes";
 
 const router = createAPIRouter()

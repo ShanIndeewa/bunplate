@@ -6,6 +6,11 @@ import * as HttpStatusPhrases from "stoker/http-status-phrases";
 import type { APIRouteHandler } from "@/types";
 import { notifications } from "core/database/schema";
 
+type Session = {
+  userId: string;
+  activeOrganizationId?: string | null;
+};
+
 import type {
   CreateRoute,
   GetByIdRoute,
@@ -41,10 +46,10 @@ export const list: APIRouteHandler<ListRoute> = async (c) => {
 // Create new notifications
 export const create: APIRouteHandler<CreateRoute> = async (c) => {
   const body = c.req.valid("json");
-  const session = c.get("session");
+  const session = c.get("session") as Session | undefined;
   const db = c.get("db");
 
-  if (!session) {
+  if (!session?.userId) {
     return c.json(
       { message: HttpStatusPhrases.UNAUTHORIZED },
       HttpStatusCodes.UNAUTHORIZED
@@ -105,14 +110,7 @@ export const patch: APIRouteHandler<UpdateRoute> = async (c) => {
   const [updated] = await db
     .update(notifications)
     .set({
-      ...(updates.title && { title: updates.title }),
-      ...(updates.message && { message: updates.message }),
-      ...(updates.metadata && { metadata: updates.metadata }),
-      ...(updates.notificationType && {
-        notificationType: updates.notificationType as "pending" | "approved",
-      }),
-      ...(updates.recipientType && { recipientType: updates.recipientType }),
-      ...(updates.readAt !== undefined && { readAt: updates.readAt }),
+      ...updates,
       updatedAt: new Date(),
     })
     .where(eq(notifications.id, String(id)))
@@ -153,7 +151,7 @@ export const remove: APIRouteHandler<RemoveRoute> = async (c) => {
     );
   }
 
-  return c.json({ message: "Deleted successfully" }, HttpStatusCodes.OK);
+  return c.body(null, HttpStatusCodes.NO_CONTENT);
 };
 
 // import { eq } from "drizzle-orm";

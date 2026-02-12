@@ -9,8 +9,8 @@ export const bulkMessageSchema = z.object({
 
   userId: z.string(),
 
-  createdAt: z.string(), // or z.date()
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 
   status: z.enum(["pending", "sent", "failed"]),
 

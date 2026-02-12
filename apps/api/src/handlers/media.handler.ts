@@ -40,7 +40,7 @@ export const list: APIRouteHandler<ListRoute> = async (c) => {
 
   // Build query conditions
   const query = db.query.media.findMany({
-    const db = c.get("db");
+
     limit: limitNum,
     offset,
     where: (fields, { ilike, and, eq }) => {

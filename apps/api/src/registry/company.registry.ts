@@ -1,18 +1,18 @@
 import { createAPIRouter } from "@/lib/setup-api";
-import * as handlers from "./company.handler";
-import * as routes from "./company.routes";
+import * as handlers from "../handlers/company/company.handler";
+import * as routes from "../routes/company/company.routes";
 
-import * as imageHandlers from "./images/company-images.handler";
-import * as imageRoutes from "./images/company-images.routes";
+import * as imageHandlers from "../handlers/company/images/company-images.handler";
+import * as imageRoutes from "../routes/company/company-images.routes";
 
-import * as branchesHandlers from "./branches/branches.handler";
-import * as branchesRoutes from "./branches/branches.routes";
+import * as branchesHandlers from "../handlers/company/branches/branches.handler";
+import * as branchesRoutes from "../routes/company/branches.routes";
 
-import * as industriesHandlers from "./industries/industries.handler";
-import * as industriesRoutes from "./industries/industries.routes";
+import * as industriesHandlers from "../handlers/company/industries/industries.handler";
+import * as industriesRoutes from "../routes/company/industries.routes";
 
-import * as policyHandlers from "./policies/policies.handler";
-import * as policyRoutes from "./policies/policies.routes";
+import * as policyHandlers from "../handlers/company/policies/policies.handler";
+import * as policyRoutes from "../routes/company/policies.routes";
 
 const router = createAPIRouter()
   // -------------------- Company --------------------

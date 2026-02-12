@@ -90,6 +90,7 @@ export const create: APIRouteHandler<CreateRoute> = async (c) => {
 // 🔍 Get one (must belong to the logged-in user)
 export const getOne: APIRouteHandler<GetByIdRoute> = async (c) => {
   const { id } = c.req.valid("param");
+  const db = c.get("db");
   const session = c.get("session") as Session | undefined;
 
   if (!session?.userId) {

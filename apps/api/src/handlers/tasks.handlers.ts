@@ -165,7 +165,7 @@ export const remove: APIRouteHandler<RemoveRoute> = async (c) => {
       return c.json({ message: "Task not found !" }, HttpStatusCodes.NOT_FOUND);
     }
 
-    return c.json(HttpStatusCodes.NO_CONTENT);
+    return c.body(null, HttpStatusCodes.NO_CONTENT);
   } catch (error) {
     return c.json(
       {

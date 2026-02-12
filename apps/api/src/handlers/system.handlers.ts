@@ -11,7 +11,7 @@ export const checkUserTypeHandler: APIRouteHandler<CheckUserTypeRoute> = async (
 ) => {
   const db = c.get("db");
   try {
-    const session = c.get("session");
+    const session = c.get("session") as { userId: string; activeOrganizationId?: string | null } | undefined;
     const user = c.get("user");
 
     if (!session || !user) {

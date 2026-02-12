@@ -1,14 +1,18 @@
-import { userRecommendations } from "../database/schema/userRecommendation.schema";
-
 import { z } from "zod";
 
-// DB -> TS type for selects
-export const userRecommendation = z.object(userRecommendations);
+export const userRecommendation = z.object({
+  id: z.string(),
+  organizationId: z.string().nullable(),
+  userId: z.string(),
+  recommenderUserId: z.string().nullable(),
+  recommenderName: z.string(),
+  recommenderTitle: z.string().nullable(),
+  text: z.string().nullable(),
+  updatedAt: z.coerce.date().nullable(),
+  createdAt: z.coerce.date().nullable(),
+});
 
-// Insert schema (server will fill id/userId/orgId/timestamps)
-export const userRecommendationInsertSchema = z.object(
-  userRecommendations
-).omit({
+export const userRecommendationInsertSchema = userRecommendation.omit({
   id: true,
   updatedAt: true,
   createdAt: true,
@@ -17,10 +21,7 @@ export const userRecommendationInsertSchema = z.object(
   recommenderUserId: true,
 });
 
-// Partial update schema (server controls some fields)
-export const userRecommendationUpdateSchema = z.object(
-  userRecommendations
-)
+export const userRecommendationUpdateSchema = userRecommendation
   .omit({
     id: true,
     organizationId: true,
@@ -31,10 +32,6 @@ export const userRecommendationUpdateSchema = z.object(
   })
   .partial();
 
-export type UserRecommendationUpdate = z.infer<
-  typeof userRecommendationUpdateSchema
->;
+export type UserRecommendationUpdate = z.infer<typeof userRecommendationUpdateSchema>;
 export type UserRecommendation = z.infer<typeof userRecommendation>;
-export type UserRecommendationInsert = z.infer<
-  typeof userRecommendationInsertSchema
->;
+export type UserRecommendationInsert = z.infer<typeof userRecommendationInsertSchema>;

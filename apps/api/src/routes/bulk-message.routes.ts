@@ -111,8 +111,8 @@ export const update = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      bulkMessageUpdateSchema,
-      "The bulk message item"
+      bulkMessageSchema,
+      "The updated bulk message"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(errorMessageSchema, "Not found"),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(

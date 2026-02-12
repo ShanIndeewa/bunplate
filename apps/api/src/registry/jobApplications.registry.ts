@@ -1,5 +1,5 @@
 import { createAPIRouter } from "@/lib/setup-api";
-import * as handlers from "./jobApplications.handlers";
+import * as handlers from "../handlers/jobApplications.handlers";
 import * as routes from "../routes/jobApplications.routes";
 
 const router = createAPIRouter()

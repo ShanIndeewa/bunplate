@@ -128,6 +128,7 @@ export const getOne: APIRouteHandler<GetByIdRoute> = async (c) => {
 // ✏️ Update (only your own row)
 export const patch: APIRouteHandler<UpdateRoute> = async (c) => {
   const db = c.get("db");
+  const { id } = c.req.valid("param");
   const updates = c.req.valid("json");
   const session = c.get("session") as Session | undefined;
 

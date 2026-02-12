@@ -204,5 +204,5 @@ export const remove: APIRouteHandler<RemoveRoute> = async (c) => {
     );
   }
 
-  return c.json({ message: "Deleted successfully" }, HttpStatusCodes.OK);
+  return c.body(null, HttpStatusCodes.NO_CONTENT);
 };

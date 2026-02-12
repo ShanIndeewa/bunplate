@@ -1,11 +1,5 @@
-// job-category.zod.ts
-
 import { z } from "zod";
 
-// Adjust the import path to wherever your table is exported from
-import { jobCategory } from "../database/schema/job-category.schema"; // or: "@/server/db/schema/job-category"
-
-// Define the job category type enum for validation
 export const jobCategoryTypeSchema = z.enum([
   "Technology",
   "Design",
@@ -16,32 +10,34 @@ export const jobCategoryTypeSchema = z.enum([
   "Hospitality",
   "Transportation",
   "Retail",
-  "Engineering"
+  "Engineering",
 ]);
 
-export const jobCategorySelectSchema = z.object(jobCategory);
-
-export const jobCategoryInsertSchema = z.object(jobCategory).omit({
-  createdAt: true,
-  updatedAt: true,
-  userId: true, // set server-side from the session
-}).extend({
+export const jobCategorySelectSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  keyword: z.string(),
+  description: z.string().nullable(),
   type: jobCategoryTypeSchema,
+  createdAt: z.coerce.date().nullable(),
+  updatedAt: z.coerce.date().nullable(),
 });
 
-export type JobTypeInsert = z.infer<typeof jobCategoryInsertSchema>;
+export const jobCategoryInsertSchema = jobCategorySelectSchema.omit({
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  userId: true,
+});
 
-export const jobCategoryUpdateSchema = z.object(jobCategory)
+export const jobCategoryUpdateSchema = jobCategorySelectSchema
   .omit({
     id: true,
     userId: true,
     createdAt: true,
     updatedAt: true,
   })
-  .partial()
-  .extend({
-    type: jobCategoryTypeSchema.optional(),
-  });
+  .partial();
 
 export type JobCategory = z.infer<typeof jobCategorySelectSchema>;
 export type JobCategoryInsert = z.infer<typeof jobCategoryInsertSchema>;

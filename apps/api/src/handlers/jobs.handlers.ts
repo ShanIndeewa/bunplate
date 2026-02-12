@@ -161,7 +161,7 @@ export const createJobHandler: APIRouteHandler<CreateRoute> = async (c) => {
       ...body,
       companyId: company.id,
       postedAt: new Date(),
-    })
+    } as typeof jobs.$inferInsert)
     .returning();
 
   return c.json(inserted, HttpStatusCodes.CREATED);

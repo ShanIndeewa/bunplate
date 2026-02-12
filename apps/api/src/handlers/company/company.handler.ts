@@ -21,9 +21,15 @@ import type {
   RemoveCompanyTypeRoute,
   UpdateCompanyRoute,
   UpdateCompanyTypeRoute,
-} from "./company.routes";
+} from "../../routes/company/company.routes";
 
-import type { CompanySelectType } from "core/database/schema";
+import type { CompanySelectType } from "core/zod";
+
+// Extend session type to include activeOrganizationId from auth schema
+type SessionWithOrg = {
+  activeOrganizationId?: string | null;
+  [key: string]: unknown;
+};
 
 /**
  * ================================================================
@@ -174,7 +180,7 @@ export const listAllCompaniesHandler: APIRouteHandler<
   const limitNum = Math.max(1, Math.min(100, parseInt(limit)));
   const offset = (pageNum - 1) * limitNum;
 
-  const query = db.query.companies.findMany({
+  const companyEntries = await db.query.companies.findMany({
     limit: limitNum,
     offset,
     where: (fields, { ilike, and, eq }) => {
@@ -195,7 +201,7 @@ export const listAllCompaniesHandler: APIRouteHandler<
     },
   });
 
-  const totalCountQuery = db
+  const totalCountResult = await db
     .select({ count: sql<number>`count(*)` })
     .from(companies)
     .where(() => {
@@ -206,16 +212,12 @@ export const listAllCompaniesHandler: APIRouteHandler<
       return conditions.length ? and(...conditions) : undefined;
     });
 
-  const [companyEntries, _totalCount] = await Promise.all([
-    query,
-    totalCountQuery,
-  ]);
-  const totalCount = _totalCount[0]?.count || 0;
+  const totalCount = totalCountResult[0]?.count || 0;
   const totalPages = Math.ceil(totalCount / limitNum);
 
   return c.json(
     {
-      data: companyEntries,
+      data: companyEntries as unknown as CompanySelectType[],
       meta: { currentPage: pageNum, totalPages, totalCount, limit: limitNum },
     },
     HttpStatusCodes.OK
@@ -237,7 +239,7 @@ export const createNewCompanyHandler: APIRouteHandler<
       HttpStatusCodes.UNAUTHORIZED
     );
 
-  if (user.role === "user" && !session.activeOrganizationId)
+  if (user.role === "user" && !(session as SessionWithOrg).activeOrganizationId)
     return c.json(
       { message: HttpStatusPhrases.FORBIDDEN },
       HttpStatusCodes.FORBIDDEN
@@ -262,7 +264,7 @@ export const createNewCompanyHandler: APIRouteHandler<
       companyType: body.companyType ?? null,
       industryId: body.industryId ?? null,
       employeeCount: body.employeeCount ?? null,
-      organizationId: session.activeOrganizationId!,
+      organizationId: (session as SessionWithOrg).activeOrganizationId!,
       createdBy: user.id,
     })
     .returning();
@@ -371,7 +373,7 @@ export const getMyCompanyHandler: APIRouteHandler<GetMyCompanyRoute> = async (
       HttpStatusCodes.UNAUTHORIZED
     );
 
-  if (!session.activeOrganizationId)
+  if (!(session as SessionWithOrg).activeOrganizationId)
     return c.json(
       { message: HttpStatusPhrases.FORBIDDEN },
       HttpStatusCodes.FORBIDDEN
@@ -379,7 +381,7 @@ export const getMyCompanyHandler: APIRouteHandler<GetMyCompanyRoute> = async (
 
   const company = await db.query.companies.findFirst({
     where: (fields, { eq }) =>
-      eq(fields.organizationId, session.activeOrganizationId!),
+      eq(fields.organizationId, (session as SessionWithOrg).activeOrganizationId!),
     with: {
       branches: true,
       images: true,
@@ -427,8 +429,8 @@ export const updateCompanyHandler: APIRouteHandler<UpdateCompanyRoute> = async (
 
   const isAdmin = user.role === "admin";
   const isOrgOwner =
-    session.activeOrganizationId &&
-    company.organizationId === session.activeOrganizationId;
+    (session as SessionWithOrg).activeOrganizationId &&
+    company.organizationId === (session as SessionWithOrg).activeOrganizationId;
 
   if (!isAdmin && !isOrgOwner)
     return c.json(

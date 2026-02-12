@@ -1,5 +1,5 @@
 import { createAPIRouter } from "@/lib/setup-api";
-import * as handlers from "./jobWishlist.handlers";
+import * as handlers from "../handlers/jobWishlist.handlers";
 import * as routes from "../routes/jobWishlist.routes";
 
 

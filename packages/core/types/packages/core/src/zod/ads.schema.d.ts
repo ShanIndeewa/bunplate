@@ -1,0 +1,48 @@
+import { z } from "zod";
+export declare const adSelectSchema: z.ZodObject<{
+    id: z.ZodString;
+    userId: z.ZodString;
+    title: z.ZodString;
+    description: z.ZodNullable<z.ZodString>;
+    imageUrl: z.ZodNullable<z.ZodString>;
+    category: z.ZodNullable<z.ZodString>;
+    externalLink: z.ZodNullable<z.ZodString>;
+    placement: z.ZodString;
+    adSize: z.ZodString;
+    isActive: z.ZodBoolean;
+    startDate: z.ZodNullable<z.ZodCoercedDate<unknown>>;
+    endDate: z.ZodNullable<z.ZodCoercedDate<unknown>>;
+    viewCount: z.ZodNumber;
+    clickCount: z.ZodNumber;
+    metadata: z.ZodNullable<z.ZodAny>;
+    createdAt: z.ZodCoercedDate<unknown>;
+}, z.core.$strip>;
+export declare const adInsertSchema: z.ZodObject<{
+    metadata: z.ZodNullable<z.ZodAny>;
+    title: z.ZodString;
+    description: z.ZodNullable<z.ZodString>;
+    imageUrl: z.ZodNullable<z.ZodString>;
+    category: z.ZodNullable<z.ZodString>;
+    externalLink: z.ZodNullable<z.ZodString>;
+    placement: z.ZodString;
+    adSize: z.ZodString;
+    isActive: z.ZodBoolean;
+    startDate: z.ZodNullable<z.ZodCoercedDate<unknown>>;
+    endDate: z.ZodNullable<z.ZodCoercedDate<unknown>>;
+}, z.core.$strip>;
+export declare const adUpdateSchema: z.ZodObject<{
+    metadata: z.ZodOptional<z.ZodNullable<z.ZodAny>>;
+    title: z.ZodOptional<z.ZodString>;
+    description: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    imageUrl: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    category: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    externalLink: z.ZodOptional<z.ZodNullable<z.ZodString>>;
+    placement: z.ZodOptional<z.ZodString>;
+    adSize: z.ZodOptional<z.ZodString>;
+    isActive: z.ZodOptional<z.ZodBoolean>;
+    startDate: z.ZodOptional<z.ZodNullable<z.ZodCoercedDate<unknown>>>;
+    endDate: z.ZodOptional<z.ZodNullable<z.ZodCoercedDate<unknown>>>;
+}, z.core.$strip>;
+export type Ad = z.infer<typeof adSelectSchema>;
+export type AdInsert = z.infer<typeof adInsertSchema>;
+export type AdUpdate = z.infer<typeof adUpdateSchema>;

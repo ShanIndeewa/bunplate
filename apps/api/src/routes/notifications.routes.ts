@@ -110,8 +110,8 @@ export const update = createRoute({
   },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
-      notificationsUpdateSchema,
-      "The notifications item"
+      notificationsSchema,
+      "The updated notification"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(errorMessageSchema, "Not found"),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(

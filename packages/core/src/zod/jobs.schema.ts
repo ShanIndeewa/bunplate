@@ -1,24 +1,42 @@
-
 import { z } from "zod";
 
-import { jobs } from "../database/schema/job.schema";
+export const jobsTypeSchema = z.enum([
+  "full_time",
+  "part_time",
+  "contract",
+  "internship",
+]);
 
-// -------------------
-// Select schema (full job object)
-// -------------------
-export const job = z.object(jobs);
+export const jobsStatusSchema = z.enum(["open", "closed", "paused"]);
 
-// -------------------
-// Insert schema (used for creating a job)
-// Automatically omits fields handled by backend like id, companyId, timestamps
-// -------------------
-export const jobInsertSchema = z.object(jobs)
+export const job = z.object({
+  id: z.string(),
+  companyId: z.string(),
+  jobCategoryId: z.string().nullable(),
+  title: z.string(),
+  description: z.string(),
+  location: z.string().nullable(),
+  type: jobsTypeSchema,
+  salaryMin: z.string().nullable(),
+  salaryMax: z.string().nullable(),
+  experienceRequired: z.string().nullable(),
+  skills: z.any().nullable(),
+  numberOfVacancies: z.number(),
+  status: jobsStatusSchema,
+  isRemote: z.boolean(),
+  postedAt: z.coerce.date(),
+  closingDate: z.coerce.date().nullable(),
+  createdAt: z.coerce.date().nullable(),
+  updatedAt: z.coerce.date().nullable(),
+});
+
+export const jobInsertSchema = job
   .omit({
     id: true,
-    companyId: true, // will be set automatically from logged-in user
+    companyId: true,
     createdAt: true,
     updatedAt: true,
-    postedAt: true, // handled by default
+    postedAt: true,
   })
   .extend({
     salaryMin: z.number().nullable().optional(),
@@ -27,13 +45,10 @@ export const jobInsertSchema = z.object(jobs)
     closingDate: z.preprocess((val) => {
       if (typeof val === "string" && val) return new Date(val);
       return val;
-    }, z.date().nullable()), // now string will be converted to Date
+    }, z.date().nullable().optional()),
   });
 
-// -------------------
-// Update schema (partial, for updating a job)
-// -------------------
-export const jobUpdateSchema = z.object(jobs)
+export const jobUpdateSchema = job
   .omit({
     id: true,
     companyId: true,
@@ -41,11 +56,8 @@ export const jobUpdateSchema = z.object(jobs)
     updatedAt: true,
     postedAt: true,
   })
-  .partial(); // allow partial updates
+  .partial();
 
-// -------------------
-// TypeScript types
-// -------------------
 export type Job = z.infer<typeof job>;
 export type JobInsertType = z.infer<typeof jobInsertSchema>;
 export type JobUpdateType = z.infer<typeof jobUpdateSchema>;

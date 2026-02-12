@@ -8,10 +8,10 @@ import {
   getPaginatedSchema,
   queryParamsSchema,
   stringIdParamSchema,
-} from "../../../../packages/core/src/zod/helpers";
+} from "../../../../../packages/core/src/zod/helpers";
 
 import {
-  companyInsertSchema as companyInsertByAdminSchema,
+  companyInsertByAdminSchema,
   companyInsertSchema,
   companyQueryParamsSchema,
   companySelectWithRelationsSchema,
@@ -19,7 +19,7 @@ import {
   companyTypeSchema,
   companyTypeUpdateSchema,
   companyUpdateSchema,
-} from "../../../../packages/core/src/zod/company.schema";
+} from "../../../../../packages/core/src/zod/company.schema";
 
 export const tags: string[] = ["Companies"];
 

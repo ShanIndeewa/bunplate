@@ -96,7 +96,7 @@ export const update = createRoute({
     ),
   },
   responses: {
-    [HttpStatusCodes.OK]: jsonContent(articleUpdateSchema, "The article item"),
+    [HttpStatusCodes.OK]: jsonContent(articleSchema, "The updated article"),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(errorMessageSchema, "Not found"),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       errorMessageSchema,

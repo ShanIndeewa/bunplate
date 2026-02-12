@@ -10,4 +10,4 @@ export declare const ZOD_ERROR_CODES: {
 };
 export declare const notFoundSchema: import("zod").ZodObject<{
     message: import("zod").ZodString;
-}, import("zod/v4/core").$strip>;
+}, import("better-auth").$strip>;

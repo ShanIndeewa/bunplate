@@ -1,32 +1,35 @@
-
 import { z } from "zod";
 
-import { jobWishlist } from "../database/schema/jobWishlist.schema";
+export const jobStatusSchema = z.enum(["live", "expired"]);
 
-// ✅ Select schema (for reading wishlist records)
-export const jobWishlistSchema = z.object(jobWishlist);
-
-// ✅ Insert schema (for adding a new wishlist record)
-export const jobWishlistInsertSchema = z.object(jobWishlist).omit({
-
-  id: true,
-  userId: true,        // user shouldn't be changed
-  createdAt: true,      // default now()
-  jobStatus: true,      // default "live"
-  isApplied: true,      // default false
+export const jobWishlistSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  jobId: z.string(),
+  organizationId: z.string().nullable(),
+  jobStatus: jobStatusSchema,
+  isApplied: z.boolean(),
+  createdAt: z.coerce.date().nullable(),
+  updatedAt: z.coerce.date().nullable(),
 });
 
-// ✅ Update schema (for updating wishlist record)
-export const jobWishlistUpdateSchema = z.object(jobWishlist)
+export const jobWishlistInsertSchema = jobWishlistSchema.omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+  jobStatus: true,
+  isApplied: true,
+});
+
+export const jobWishlistUpdateSchema = jobWishlistSchema
   .omit({
     id: true,
-    userId: true,        // user shouldn't be changed
-    jobId: true,         // job reference shouldn't be changed
+    userId: true,
+    jobId: true,
     createdAt: true,
   })
-  .partial(); // all fields optional for updates
+  .partial();
 
-// ✅ Types
 export type JobWishlist = z.infer<typeof jobWishlistSchema>;
 export type JobWishlistInsertType = z.infer<typeof jobWishlistInsertSchema>;
 export type JobWishlistUpdateType = z.infer<typeof jobWishlistUpdateSchema>;

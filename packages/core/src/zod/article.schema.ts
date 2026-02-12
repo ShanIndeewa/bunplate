@@ -48,7 +48,7 @@ export const articleUpdateSchema = articleInsertSchema.partial();
    TYPES
 ====================================================== */
 
-export type article = z.infer<typeof articleSchema>;
+export type Article = z.infer<typeof articleSchema>;
 
 export type ArticleInsertType = z.infer<typeof articleInsertSchema>;
 

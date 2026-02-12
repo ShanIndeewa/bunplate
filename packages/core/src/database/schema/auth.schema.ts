@@ -101,4 +101,13 @@ export const invitation = pgTable("invitation", {
     .references(() => user.id, { onDelete: "cascade" })
 });
 
+// Plural aliases (required by better-auth drizzle adapter with usePlural: true)
+export { user as users };
+export { session as sessions };
+export { account as accounts };
+export { verification as verifications };
+export { organization as organizations };
+export { member as members };
+export { invitation as invitations };
+
 // Define relations

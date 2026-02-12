@@ -34,6 +34,10 @@ export const list = createRoute({
       errorMessageSchema,
       "Unauthorized access"
     ),
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+      errorMessageSchema,
+      "Internal server error"
+    ),
   },
 });
 
@@ -61,6 +65,10 @@ export const listAll = createRoute({
     [HttpStatusCodes.FORBIDDEN]: jsonContent(
       errorMessageSchema,
       "Forbidden - Admin access required"
+    ),
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+      errorMessageSchema,
+      "Internal server error"
     ),
   },
 });
@@ -90,6 +98,10 @@ export const listCompany = createRoute({
     [HttpStatusCodes.FORBIDDEN]: jsonContent(
       errorMessageSchema,
       "Forbidden - Company access required"
+    ),
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+      errorMessageSchema,
+      "Internal server error"
     ),
   },
 });
@@ -157,6 +169,10 @@ export const create = createRoute({
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       errorMessageSchema,
       "Unauthorized"
+    ),
+    [HttpStatusCodes.CONFLICT]: jsonContent(
+      errorMessageSchema,
+      "Already applied to this job"
     ),
   },
 });

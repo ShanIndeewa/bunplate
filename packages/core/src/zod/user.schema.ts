@@ -1,14 +1,17 @@
-// // user.schema.ts
-// import { user } from "../database/schema/user.schema";
-// import { z } from "zod";
+import { z } from "zod";
 
-// // Keep overrides minimal and aligned with your DB column nullability
-// const overrides = {
-//   email: z.string().email(),
-//   image: z.string().url().nullish(),
-// };
+export const userSelectSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  email: z.string().email(),
+  emailVerified: z.boolean(),
+  image: z.string().nullable().optional(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
+  role: z.string().nullable(),
+  banned: z.boolean().nullable(),
+  banReason: z.string().nullable(),
+  banExpires: z.coerce.date().nullable(),
+});
 
-// export const userSelectSchema = z.object(user, overrides);
-
-// // Types
-// export type User = z.infer<typeof userSelectSchema>;
+export type User = z.infer<typeof userSelectSchema>;

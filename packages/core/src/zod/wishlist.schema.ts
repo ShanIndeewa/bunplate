@@ -1,21 +1,24 @@
-
 import { z } from "zod";
 
-import { jobWishlist } from "../database/schema/jobWishlist.schema";
-
-// Full row (select) schema — Date objects for timestamps
-export const wishlistSchema = z.object(jobWishlist);
-
-// Insert schema — omit server-managed fields
-export const wishlistInsertSchema = z.object(jobWishlist).omit({
-  id: true,
-  userId: true, // set from session on the server
-  createdAt: true, // defaultNow() in DB
-  updatedAt: true, // defaultNow() in DB
+export const wishlistSchema = z.object({
+  id: z.string(),
+  userId: z.string(),
+  jobId: z.string(),
+  organizationId: z.string().nullable(),
+  jobStatus: z.enum(["live", "expired"]),
+  isApplied: z.boolean(),
+  createdAt: z.coerce.date().nullable(),
+  updatedAt: z.coerce.date().nullable(),
 });
 
-// Update schema — same omissions, but everything optional
-export const wishlistUpdateSchema = z.object(jobWishlist)
+export const wishlistInsertSchema = wishlistSchema.omit({
+  id: true,
+  userId: true,
+  createdAt: true,
+  updatedAt: true,
+});
+
+export const wishlistUpdateSchema = wishlistSchema
   .omit({
     id: true,
     userId: true,

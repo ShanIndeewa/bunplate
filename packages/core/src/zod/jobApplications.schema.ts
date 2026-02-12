@@ -1,12 +1,10 @@
-import { jobApplications } from "../database/schema/jobApplications.schema";
-
 import { z } from "zod";
 
 /** Helpers */
 const emptyToNull = <T extends z.ZodTypeAny>(schema: T) =>
   z.preprocess((v) => (v === "" ? null : v), schema.nullable());
 
-/** applicant_profile JSONB shape (override) */
+/** applicant_profile JSONB shape */
 export const ApplicantProfileSchema = z
   .object({
     fullName: z.string().min(1).max(256).optional(),
@@ -19,43 +17,63 @@ export const ApplicantProfileSchema = z
   .passthrough()
   .optional();
 
-/** Common overrides reused below */
-const commonOverrides = {
-  tags: z.array(z.string()).max(50).optional(), // jsonb -> string[]
-  source: z.string().max(64).nullable().optional(),
-  referralCode: z.string().max(64).nullable().optional(),
-  applicantProfile: ApplicantProfileSchema,
-  adminAction: z.enum(["admin_only", "access_company"]).optional(),
-  // coverLetterText is text and optional in DB, drizzle-zod infers optional automatically
-};
+export const applicationStatusSchema = z.enum([
+  "draft",
+  "submitted",
+  "under_review",
+  "shortlisted",
+  "interview_scheduled",
+  "offer_extended",
+  "hired",
+  "rejected",
+  "withdrawn",
+]);
+
+export const adminActionSchema = z.enum(["admin_only", "access_company"]);
 
 /** SELECT schema (read shape) */
-export const jobApplication = z.object(jobApplications).extend({
-  ...commonOverrides,
+export const jobApplication = z.object({
+  id: z.string(),
+  organizationId: z.string().nullable(),
+  userId: z.string(),
+  jobId: z.string(),
+  roundNo: z.number(),
+  status: applicationStatusSchema,
+  adminAction: adminActionSchema,
+  mediaId: z.string().nullable(),
+  applicantProfile: ApplicantProfileSchema.nullable(),
+  coverLetterText: z.string().nullable(),
+  source: z.string().nullable(),
+  referralCode: z.string().nullable(),
+  tags: z.any().nullable(),
+  submittedAt: z.coerce.date().nullable(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 /** INSERT schema (create shape) */
-export const jobApplicationInsertSchema = z.object(jobApplications).extend({
-  ...commonOverrides,
-  // fix empty string issue & enforce uuid if present
-  mediaId: emptyToNull(z.string().uuid()).optional(),
-}).omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-  submittedAt: true,
-  organizationId: true, // you'll likely set this server-side
-  userId: true, // set from auth context
-  roundNo: true, // default(1) – set/compute server-side if needed
-  status: true, // default('submitted') – set server-side if you want to override
-  adminAction: true, // only admins can set this
-});
+export const jobApplicationInsertSchema = jobApplication
+  .omit({
+    id: true,
+    createdAt: true,
+    updatedAt: true,
+    submittedAt: true,
+    organizationId: true,
+    userId: true,
+    roundNo: true,
+    status: true,
+    adminAction: true,
+  })
+  .extend({
+    mediaId: emptyToNull(z.string().uuid()).optional(),
+    tags: z.array(z.string()).max(50).optional(),
+    source: z.string().max(64).nullable().optional(),
+    referralCode: z.string().max(64).nullable().optional(),
+    applicantProfile: ApplicantProfileSchema,
+  });
 
 /** UPDATE schema (patch shape) */
-export const jobApplicationUpdateSchema = z.object(jobApplications).extend({
-  ...commonOverrides,
-  mediaId: emptyToNull(z.string().uuid()).optional(),
-})
+export const jobApplicationUpdateSchema = jobApplication
   .omit({
     id: true,
     organizationId: true,
@@ -63,17 +81,21 @@ export const jobApplicationUpdateSchema = z.object(jobApplications).extend({
     createdAt: true,
     updatedAt: true,
     submittedAt: true,
-    jobId: true, // don't allow job swap in a patch by default
-    roundNo: true, // immutable via this schema
-    adminAction: true, // only admins can update this
+    jobId: true,
+    roundNo: true,
+    adminAction: true,
+  })
+  .extend({
+    mediaId: emptyToNull(z.string().uuid()).optional(),
+    tags: z.array(z.string()).max(50).optional(),
+    source: z.string().max(64).nullable().optional(),
+    referralCode: z.string().max(64).nullable().optional(),
+    applicantProfile: ApplicantProfileSchema,
   })
   .partial();
 
 /** ADMIN UPDATE schema (allows admin to update adminAction) */
-export const jobApplicationAdminUpdateSchema = z.object(jobApplications).extend({
-  ...commonOverrides,
-  mediaId: emptyToNull(z.string().uuid()).optional(),
-})
+export const jobApplicationAdminUpdateSchema = jobApplication
   .omit({
     id: true,
     organizationId: true,
@@ -81,8 +103,16 @@ export const jobApplicationAdminUpdateSchema = z.object(jobApplications).extend(
     createdAt: true,
     updatedAt: true,
     submittedAt: true,
-    jobId: true, // don't allow job swap in a patch by default
-    roundNo: true, // immutable via this schema
+    jobId: true,
+    roundNo: true,
+  })
+  .extend({
+    mediaId: emptyToNull(z.string().uuid()).optional(),
+    tags: z.array(z.string()).max(50).optional(),
+    source: z.string().max(64).nullable().optional(),
+    referralCode: z.string().max(64).nullable().optional(),
+    applicantProfile: ApplicantProfileSchema,
+    adminAction: adminActionSchema.optional(),
   })
   .partial();
 

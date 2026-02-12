@@ -1,35 +1,22 @@
 import { z } from "zod";
-import { id } from "zod/locales";
 
 export const adSelectSchema = z.object({
-  // General Info
-    id: z.string(),
-    userId: z.string(),
-    title: z.string(),
-    description: z.string().nullable(),
-    imageUrl: z.string().nullable(),
-  
-    // Ad Meta
-    category: z.string().nullable(),
-    externalLink: z.string().nullable(),
-    placement: z.string(),
-    adSize: z.string(),
-  
-    // Scheduling
-    isActive: z.boolean(),
-    startDate: z.date().nullable(),
-    endDate: z.date().nullable(),
-  
-    // Stats
-    viewCount: z.number(),
-    clickCount: z.number(),
-  
-    // Extra metadata (future-proof)
-    metadata: z.json().nullable(),
-  
-    // Audit
-    createdAt: z.date(),
-  
+  id: z.string(),
+  userId: z.string(),
+  title: z.string(),
+  description: z.string().nullable(),
+  imageUrl: z.string().nullable(),
+  category: z.string().nullable(),
+  externalLink: z.string().nullable(),
+  placement: z.string(),
+  adSize: z.string(),
+  isActive: z.boolean(),
+  startDate: z.coerce.date().nullable(),
+  endDate: z.coerce.date().nullable(),
+  viewCount: z.number(),
+  clickCount: z.number(),
+  metadata: z.any().nullable(),
+  createdAt: z.coerce.date(),
 });
 
 export const adInsertSchema = adSelectSchema.omit({

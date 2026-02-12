@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql, type SQL } from "drizzle-orm";
 import * as HttpStatusCodes from "stoker/http-status-codes";
 import * as HttpStatusPhrases from "stoker/http-status-phrases";
 
@@ -10,6 +10,7 @@ import { companies, jobApplications, jobs, member, user } from "core/database/sc
 import type {
     AdminRemoveRoute,
     AdminUpdateRoute,
+    CheckApplicationRoute,
     CreateRoute,
     GetByIdRoute,
     ListAllRoute,
@@ -75,7 +76,7 @@ export const list: APIRouteHandler<ListRoute> = async (c) => {
   const isAdmin = false; // Replace with actual admin check
   const finalWhere = isAdmin
     ? baseWhere
-    : and(baseWhere, eq(jobApplications.adminAction, "access_company"));
+    : and(baseWhere, eq(jobApplications.adminAction, "access_company" as typeof jobApplications.adminAction.enumValues[number]));
 
   // total count
   const countResult = await db
@@ -153,10 +154,10 @@ export const listAll: APIRouteHandler<ListAllRoute> = async (c) => {
   const search = c.req.query("search");
 
   // Build where conditions
-  const whereConditions = [];
+  const whereConditions: (SQL | undefined)[] = [];
 
   if (status) {
-    whereConditions.push(eq(jobApplications.status, status));
+    whereConditions.push(eq(jobApplications.status, status as typeof jobApplications.status.enumValues[number]));
   }
 
   if (search) {
@@ -347,12 +348,12 @@ export const listCompany: APIRouteHandler<ListCompanyRoute> = async (c) => {
   const jobId = c.req.query("jobId");
 
   // Build where conditions - filter by jobs that belong to the company and admin_action
-  const whereConditions = [
-    eq(jobApplications.adminAction, "access_company") // Only show applications that companies can access
+  const whereConditions: (SQL | undefined)[] = [
+    eq(jobApplications.adminAction, "access_company" as typeof jobApplications.adminAction.enumValues[number]) // Only show applications that companies can access
   ];
 
   if (status) {
-    whereConditions.push(eq(jobApplications.status, status));
+    whereConditions.push(eq(jobApplications.status, status as typeof jobApplications.status.enumValues[number]));
   }
 
   if (jobId) {
@@ -386,7 +387,7 @@ export const listCompany: APIRouteHandler<ListCompanyRoute> = async (c) => {
   }
 
   // Add company filter to where conditions
-  const countWhereConditions = [
+  const countWhereConditions: (SQL | undefined)[] = [
     ...whereConditions,
     eq(jobs.companyId, company.id) // Only show applications for jobs belonging to this company
   ];
@@ -550,7 +551,7 @@ export const create: APIRouteHandler<CreateRoute> = async (c) => {
   try {
     const [inserted] = await db
       .insert(jobApplications)
-      .values(insertData)
+      .values(insertData as typeof jobApplications.$inferInsert)
       .returning();
 
     console.log("Successfully inserted job application:", inserted);
@@ -672,7 +673,7 @@ export const patch: APIRouteHandler<UpdateRoute> = async (c) => {
   const [updated] = await db
     .update(jobApplications)
     .set({
-      ...updates,
+      ...(updates as Partial<typeof jobApplications.$inferInsert>),
       updatedAt: new Date(),
     })
     .where(where)
@@ -712,7 +713,7 @@ export const adminPatch: APIRouteHandler<AdminUpdateRoute> = async (c) => {
   const [updated] = await db
     .update(jobApplications)
     .set({
-      ...updates,
+      ...(updates as Partial<typeof jobApplications.$inferInsert>),
       updatedAt: new Date(),
     })
     .where(eq(jobApplications.id, String(id)))

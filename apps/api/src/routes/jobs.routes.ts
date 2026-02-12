@@ -100,6 +100,10 @@ export const create = createRoute({
       errorMessageSchema,
       "Unauthorized access"
     ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      errorMessageSchema,
+      "Forbidden"
+    ),
   },
 });
 
@@ -120,6 +124,10 @@ export const update = createRoute({
       errorMessageSchema,
       "Unauthorized access"
     ),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      errorMessageSchema,
+      "Forbidden"
+    ),
   },
 });
 
@@ -133,12 +141,19 @@ export const remove = createRoute({
     params: stringIdParamSchema,
   },
   responses: {
-    [HttpStatusCodes.NO_CONTENT]: { description: "No Content" },
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ message: z.string() }),
+      "Job deleted successfully"
+    ),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       errorMessageSchema,
       "Unauthorized access"
     ),
     [HttpStatusCodes.NOT_FOUND]: jsonContent(errorMessageSchema, "Not Found"),
+    [HttpStatusCodes.FORBIDDEN]: jsonContent(
+      errorMessageSchema,
+      "Forbidden"
+    ),
   },
 });
 

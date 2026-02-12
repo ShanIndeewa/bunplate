@@ -33,6 +33,10 @@ export const list = createRoute({
       errorMessageSchema,
       "Unauthorized access"
     ),
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+      errorMessageSchema,
+      "Internal server error"
+    ),
   },
 });
 
@@ -76,6 +80,14 @@ export const create = createRoute({
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
       errorMessageSchema,
       "Unauthorized access"
+    ),
+    [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+      errorMessageSchema,
+      "Bad request"
+    ),
+    [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
+      errorMessageSchema,
+      "Internal server error"
     ),
   },
 });
@@ -148,12 +160,12 @@ export const remove = createRoute({
   path: "/:id",
   request: { params: stringIdParamSchema },
   responses: {
-    204: {
-      description: "No Content - JobWishlist deleted successfully",
-      content: { "application/json": { schema: z.null() } },
-    },
-    401: jsonContent(errorMessageSchema, "Unauthorized access"),
-    404: jsonContent(errorMessageSchema, "JobWishlist not found"),
+    [HttpStatusCodes.OK]: jsonContent(
+      z.object({ message: z.string() }),
+      "JobWishlist deleted successfully"
+    ),
+    [HttpStatusCodes.UNAUTHORIZED]: jsonContent(errorMessageSchema, "Unauthorized access"),
+    [HttpStatusCodes.NOT_FOUND]: jsonContent(errorMessageSchema, "JobWishlist not found"),
   },
 });
 

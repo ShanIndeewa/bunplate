@@ -10,7 +10,7 @@ import {
   queryParamsSchema,
   stringIdParamSchema,
 } from "../../../../packages/core/src/zod/helpers";
-import { userSelectSchema } from "./user.schema";
+import { userSelectSchema } from "../../../../packages/core/src/zod/user.schema";
 
 const tags = ["User"];
 

@@ -1,11 +1,16 @@
-
 import { z } from "zod";
 
-import { userSkills } from "../database/schema/userSkill.schema";
+export const userSkill = z.object({
+  id: z.string(),
+  organizationId: z.string().nullable(),
+  userId: z.string(),
+  skillName: z.string(),
+  proficiency: z.string().nullable(),
+  updatedAt: z.coerce.date().nullable(),
+  createdAt: z.coerce.date().nullable(),
+});
 
-export const userSkill = z.object(userSkills);
-
-export const userSkillInsertSchema = z.object(userSkills).omit({
+export const userSkillInsertSchema = userSkill.omit({
   id: true,
   updatedAt: true,
   createdAt: true,
@@ -13,7 +18,7 @@ export const userSkillInsertSchema = z.object(userSkills).omit({
   userId: true,
 });
 
-export const userSkillUpdateSchema = z.object(userSkills)
+export const userSkillUpdateSchema = userSkill
   .omit({
     id: true,
     organizationId: true,
@@ -23,6 +28,6 @@ export const userSkillUpdateSchema = z.object(userSkills)
   })
   .partial();
 
-export type userSkillUpdateType = z.infer<typeof userSkillUpdateSchema>;
-export type userSkill = z.infer<typeof userSkill>;
-export type userSkillInsertType = z.infer<typeof userSkillInsertSchema>;
+export type UserSkillUpdateType = z.infer<typeof userSkillUpdateSchema>;
+export type UserSkill = z.infer<typeof userSkill>;
+export type UserSkillInsertType = z.infer<typeof userSkillInsertSchema>;
