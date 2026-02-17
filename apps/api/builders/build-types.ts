@@ -95,10 +95,22 @@ async function buildTypes() {
     console.log("✓ Path aliases replaced successfully");
 
     // Create a simplified type export file for easy consumption
+    // TypeScript may output declarations under apps/api/src/ due to monorepo root resolution
+    // Check which path exists and use it
+    const possiblePaths = ["./src/registry/index", "./apps/api/src/registry/index"];
+    let registryPath = possiblePaths[0];
+    for (const p of possiblePaths) {
+      const fullPath = resolve(DIST_TYPES, p.replace("./", "") + ".d.ts");
+      if (await Bun.file(fullPath).exists()) {
+        registryPath = p;
+        break;
+      }
+    }
+
     const typeExportContent = `// Auto-generated type exports for RPC
 // This file re-exports the Router type for use in client applications
 
-export type { Router } from "./src/registry/index";
+export type { Router } from "${registryPath}";
 `;
 
     await Bun.write(resolve(DIST_TYPES, "index.d.ts"), typeExportContent);

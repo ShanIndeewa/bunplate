@@ -1,0 +1,86 @@
+{
+  "Navbar": {
+    "logo": "Ejobs",
+    "explore": "Explore",
+    "postJobs": "+ Post Jobs",
+    "myAccount": "My Account",
+    "myProfile": "My Profile",
+    "language": "Language"
+  },
+  "Search": {
+    "destinationPlaceholder": "Find your Dream job...",
+    "locationPlaceholder": "Select location",
+    "jobCategoryPlaceholder": "Select job category",
+    "searchButton": "SEARCH",
+    "locations": {
+      "galle": "Galle",
+      "kandy": "Kandy",
+      "colombo": "Colombo",
+      "matara": "Matara"
+    },
+    "categories": {
+      "it": "IT & Software",
+      "design": "Design & Creative",
+      "marketing": "Marketing",
+      "finance": "Finance",
+      "sales": "Sales",
+      "hr": "Human Resources",
+      "healthcare": "Healthcare",
+      "education": "Education"
+    }
+  },
+  "Home": {
+    "cta": {
+      "title": "Ready to Start Your Job Search?",
+      "description": "Join thousands of professionals who found their dream jobs with us. Start your journey today.",
+      "learnMore": "Learn More"
+    },
+    "featuredJobs": {
+      "badge": "Featured Jobs",
+      "title": "Discover Your Next",
+      "titleHighlight": "Career Opportunity",
+      "description": "Explore hand-picked job opportunities from top companies. Find positions that match your skills and career aspirations.",
+      "stats": {
+        "activeJobs": "Active Job Listings",
+        "hiringCompanies": "Hiring Companies",
+        "successRate": "Success Rate"
+      },
+      "cta": "View All Jobs",
+      "jobCard": {
+        "companyName": "Company Name",
+        "fullTime": "Full-time",
+        "postedAgo": "Posted 2 days ago",
+        "applyNow": "Apply Now"
+      }
+    },
+    "featuredCompanies": {
+      "badge": "Top Companies",
+      "title": "Work with Industry",
+      "titleHighlight": "Leaders",
+      "description": "Join thousands of professionals working at the world's most innovative companies. Discover opportunities that match your career goals.",
+      "cta": "View All Companies"
+    },
+    "jobSlider": {
+      "badge": "Recommended Jobs",
+      "title": "Explore",
+      "titleHighlight": "Recommended Jobs",
+      "description": "Find your perfect role across different industries and specializations. From entry-level to executive positions, we have opportunities for everyone.",
+      "cta": "Browse All Categories",
+      "jobCard": {
+        "daysLeft": "days left",
+        "urgent": "Urgent",
+        "companyName": "Company Name",
+        "fullTime": "Full-time",
+        "postedAgo": "Posted 2 days ago",
+        "applyNow": "Apply Now"
+      }
+    },
+    "jobCategories": {
+      "badge": "Job Categories",
+      "title": "Explore Jobs by",
+      "titleHighlight": "Category",
+      "description": "Find your perfect role across different industries and specializations. From entry-level to executive positions, we have opportunities for everyone.",
+      "cta": "Browse All Categories"
+    }
+  }
+}

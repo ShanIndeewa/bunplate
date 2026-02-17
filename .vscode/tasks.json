@@ -1,0 +1,10 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Install missing packages",
+			"type": "shell",
+			"command": "cd d:/my/donext/bunplate/bunplate/apps/web && bun pm cache rm && bun add @radix-ui/react-switch @radix-ui/react-select @radix-ui/react-dropdown-menu @radix-ui/react-tabs @radix-ui/react-alert-dialog @radix-ui/react-toggle-group @radix-ui/react-toggle swr"
+		}
+	]
+}
