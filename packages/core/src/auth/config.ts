@@ -41,8 +41,8 @@ export function configAuth(config: AuthConfigurations) {
       cookies: {
         session_token: {
           attributes: {
-            sameSite: "none",
-            secure: true,
+            sameSite: isProduction ? "none" : "lax",
+            secure: isProduction,
             httpOnly: true
           }
         }
@@ -55,10 +55,10 @@ export function configAuth(config: AuthConfigurations) {
           }
         : undefined,
       defaultCookieAttributes: {
-        sameSite: "none", // Use lax for cross-subdomain, none for local dev
-        secure: true,
+        sameSite: isProduction ? "none" : "lax",
+        secure: isProduction,
         httpOnly: true,
-        partitioned: true // New browser standards will mandate this for foreign cookies
+        partitioned: isProduction // New browser standards will mandate this for foreign cookies
       }
     }
   });
