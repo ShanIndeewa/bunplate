@@ -1,7 +1,6 @@
 import { LanguageProvider } from "@/app/context/LanguageContext";
 import { Footer } from "@/modules/layouts/footer";
 import { Navbar } from "@/modules/layouts/navbar";
-import { Providers } from "@/modules/layouts/providers";
 
 export default function RootLayout({
   children,
@@ -9,14 +8,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Providers>
-      <LanguageProvider>
-        <div className="min-h-screen flex flex-col">
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-        </div>
-      </LanguageProvider>
-    </Providers>
+    <LanguageProvider>
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
+      </div>
+    </LanguageProvider>
   );
 }
