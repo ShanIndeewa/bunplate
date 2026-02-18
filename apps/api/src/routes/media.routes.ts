@@ -3,6 +3,8 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
 
+import { authMiddleware } from "@/middlewares/auth.middleware";
+
 import {
   errorMessageSchema,
   getPaginatedSchema,
@@ -23,6 +25,7 @@ export const list = createRoute({
   summary: "List all media",
   path: "/",
   method: "get",
+  middleware: [authMiddleware],
   request: {
     query: queryParamsSchema
   },
@@ -44,6 +47,7 @@ export const getById = createRoute({
   summary: "Get media by ID",
   method: "get",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema
   },
@@ -66,6 +70,7 @@ export const create = createRoute({
   summary: "Create media",
   method: "post",
   path: "/",
+  middleware: [authMiddleware],
   request: {
     body: jsonContentRequired(mediaUploadSchema, "Create uploaded media")
   },
@@ -88,6 +93,7 @@ export const update = createRoute({
   summary: "Update Media",
   method: "patch",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
     body: jsonContentRequired(mediaUpdateSchema, "Update media details schema")
@@ -108,6 +114,7 @@ export const remove = createRoute({
   summary: "Remove Media",
   method: "delete",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema
   },

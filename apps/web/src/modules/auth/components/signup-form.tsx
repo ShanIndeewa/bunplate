@@ -1,78 +1,78 @@
 "use client";
-
 import { CheckIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useId } from "react";
+import { useCallback, useId } from "react";
 import { CiFacebook } from "react-icons/ci";
 import { toast } from "sonner";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 
-import {
-  Form,
-  FormField,
-  FormControl,
-  FormItem,
-  FormLabel,
-  FormMessage
-} from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
+import { useAppForm } from "@/components/ui/tanstack-form";
+import { cn } from "@/components/lib/utils";
+import { useQueryState } from "nuqs";
 
 import { authClient } from "@/lib/auth-client";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { signupSchema, type SignupSchema } from "../schemas";
-import { PasswordInput } from "@/components/ui/password-input";
-
-interface SignupFormProps {
-  type?: "agent" | "user";
-}
 
 export function SignupForm({
   className,
-  type = "user",
   ...props
-}: React.ComponentProps<"div"> & SignupFormProps) {
+}: React.ComponentProps<"div">) {
   const toastId = useId();
   const router = useRouter();
+  const [mode, setMode] = useQueryState("mode");
 
-  const form = useForm<SignupSchema>({
-    resolver: zodResolver(signupSchema),
+  const form = useAppForm({
+    validators: { onChange: signupSchema },
     defaultValues: {
       email: "",
       password: "",
-      confirmPassword: ""
-    }
+      confirmPassword: "",
+    },
+    onSubmit: ({ value }) => handleSignup(value),
   });
 
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      form.handleSubmit();
+    },
+    [form]
+  );
+
   const handleSignup = async (values: SignupSchema) => {
-    try {
-      toast.loading("Registering new user...", { id: toastId });
-
-      const result = await authClient.signUp.email({
-        email: values.email,
-        password: values.password,
-        name: ""
-      });
-
-      if (result?.error) {
-        throw new Error(result.error.message);
-      }
-
-      toast.success("User registered successfully!", { id: toastId });
-      router.push(type === "agent" ? "/setup" : "/signin");
-    } catch (err) {
-      const error = err as Error;
-      toast.error(`Failed: ${error.message}`, { id: toastId });
-    }
+    await authClient.signUp.email({
+      email: values.email,
+      password: values.password,
+      name: "",
+      fetchOptions: {
+        onRequest() {
+          toast.loading("Registering new user...", { id: toastId });
+        },
+        onSuccess(ctx) {
+          toast.success("User registered successfully !", { id: toastId });
+          if (mode === "companyOwner") {
+            router.push("/setup");
+          } else {
+            router.push("/signin");
+          }
+        },
+        onError(ctx) {
+          toast.error(`Failed: ${ctx.error.message}`, { id: toastId });
+        },
+      },
+    });
   };
 
   return (
@@ -80,15 +80,15 @@ export function SignupForm({
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl font-heading font-bold">
-            Get Started {type === "agent" && " as Agent"}
+            Get Started
           </CardTitle>
           <CardDescription>
             Signup with your Email or Facebook account
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleSignup)}>
+          <form.AppForm>
+            <form onSubmit={handleSubmit}>
               <div className="grid gap-6">
                 <div className="flex flex-col gap-4">
                   <Button variant="outline" className="w-full">
@@ -102,75 +102,100 @@ export function SignupForm({
                   </span>
                 </div>
 
-                <FormField
-                  control={form.control}
+                {/* -------- */}
+
+                <form.AppField
                   name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="john@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  children={(field) => (
+                    <field.FormItem>
+                      <field.FormLabel>Email</field.FormLabel>
+                      <field.FormControl>
+                        <Input
+                          placeholder="john@example.com"
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
+                        />
+                      </field.FormControl>
+                      <field.FormMessage />
+                    </field.FormItem>
                   )}
                 />
 
-                <FormField
-                  control={form.control}
+                <form.AppField
                   name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Password</FormLabel>
-                      <FormControl>
-                        <PasswordInput
-                          type="password"
-                          placeholder="******"
-                          {...field}
+                  children={(field) => (
+                    <field.FormItem>
+                      <field.FormLabel>Password</field.FormLabel>
+                      <field.FormControl>
+                        <Input
+                          placeholder=""
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                      </field.FormControl>
+                      <field.FormMessage />
+                    </field.FormItem>
                   )}
                 />
 
-                <FormField
-                  control={form.control}
+                <form.AppField
                   name="confirmPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Confirm Password</FormLabel>
-                      <FormControl>
-                        <PasswordInput
-                          type="password"
-                          placeholder="******"
-                          {...field}
+                  children={(field) => (
+                    <field.FormItem>
+                      <field.FormLabel>Confirm Password</field.FormLabel>
+                      <field.FormControl>
+                        <Input
+                          placeholder=""
+                          value={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          onBlur={field.handleBlur}
                         />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                      </field.FormControl>
+                      <field.FormMessage />
+                    </field.FormItem>
                   )}
                 />
+
+                <div className="my-2 flex items-center gap-2">
+                  <Checkbox
+                    id="companyOwnerCheck"
+                    checked={mode === "companyOwner"}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        setMode("companyOwner");
+                      } else {
+                        setMode("");
+                      }
+                    }}
+                  />
+                  <Label htmlFor="companyOwnerCheck" className="text-xs">
+                    Continue as Company Owner
+                  </Label>
+                </div>
+
+                {/* -------- */}
 
                 <div className="grid gap-6">
                   <Button
                     type="submit"
                     className="w-full"
-                    loading={form.formState.isSubmitting}
-                    icon={form.formState.isSubmitSuccessful && <CheckIcon />}
+                    loading={form.state.isSubmitting}
+                    icon={form.state.isSubmitSuccessful && <CheckIcon />}
                   >
                     Sign Up
                   </Button>
                 </div>
                 <div className="text-center text-sm">
-                  {`Already have an account? `}
+                  {`Aleady have an account? `}
                   <Link href="/signin" className="underline underline-offset-4">
                     Sign In
                   </Link>
                 </div>
               </div>
             </form>
-          </Form>
+          </form.AppForm>
         </CardContent>
       </Card>
       <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">

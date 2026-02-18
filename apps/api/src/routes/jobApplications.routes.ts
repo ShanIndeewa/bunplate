@@ -3,6 +3,8 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
 
+import { authMiddleware } from "@/middlewares/auth.middleware";
+
 import {
     errorMessageSchema,
     getPaginatedSchema,
@@ -24,6 +26,7 @@ export const list = createRoute({
   summary: "List job applications (current user)",
   path: "/",
   method: "get",
+  middleware: [authMiddleware],
   request: { query: queryParamsSchema },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
@@ -47,6 +50,7 @@ export const listAll = createRoute({
   summary: "List all job applications (admin access)",
   path: "/all",
   method: "get",
+  middleware: [authMiddleware],
   request: {
     query: queryParamsSchema.extend({
       status: z.string().optional(),
@@ -79,6 +83,7 @@ export const listCompany = createRoute({
   summary: "List job applications for company (company access)",
   path: "/company",
   method: "get",
+  middleware: [authMiddleware],
   request: {
     query: queryParamsSchema.extend({
       status: z.string().optional(),
@@ -112,6 +117,7 @@ export const getById = createRoute({
   summary: "Get job application by ID",
   method: "get",
   path: "/:id",
+  middleware: [authMiddleware],
   request: { params: stringIdParamSchema },
   responses: {
     [HttpStatusCodes.OK]: jsonContent(jobApplication, "The job application"),
@@ -129,6 +135,7 @@ export const checkApplication = createRoute({
   summary: "Check if user has applied to a job",
   method: "get",
   path: "/check/:jobId",
+  middleware: [authMiddleware],
   request: {
     params: z.object({
       jobId: z.string().uuid("Invalid job ID")
@@ -155,6 +162,7 @@ export const create = createRoute({
   summary: "Create job application",
   method: "post",
   path: "/",
+  middleware: [authMiddleware],
   request: {
     body: jsonContentRequired(
       jobApplicationInsertSchema,
@@ -183,6 +191,7 @@ export const update = createRoute({
   summary: "Update job application",
   method: "patch",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
     body: jsonContentRequired(
@@ -209,6 +218,7 @@ export const adminUpdate = createRoute({
   summary: "Admin update job application (includes adminAction)",
   method: "patch",
   path: "/:id/admin",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
     body: jsonContentRequired(
@@ -239,6 +249,7 @@ export const remove = createRoute({
   summary: "Delete job application",
   method: "delete",
   path: "/:id",
+  middleware: [authMiddleware],
   request: { params: stringIdParamSchema },
   responses: {
     [HttpStatusCodes.NO_CONTENT]: { description: "No Content" },
@@ -256,6 +267,7 @@ export const adminRemove = createRoute({
   summary: "Admin delete job application",
   method: "delete",
   path: "/:id/admin",
+  middleware: [authMiddleware],
   request: { params: stringIdParamSchema },
   responses: {
     [HttpStatusCodes.NO_CONTENT]: { description: "No Content" },

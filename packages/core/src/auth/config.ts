@@ -21,8 +21,8 @@ export function configAuth(config: AuthConfigurations) {
     trustedOrigins: [
       "http://localhost:3000",
       "http://localhost:4000",
-      "https://bunplate-web.vercel.app",
-      "https://bunplate-api.vercel.app"
+      // "https://bunplate-web.vercel.app",
+      // "https://bunplate-api.vercel.app"
     ],
 
     database: drizzleAdapter(config.database, {

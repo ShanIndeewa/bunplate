@@ -151,7 +151,7 @@ export function CreateUserForm() {
 
       // Make direct fetch request to the backend
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001"}/api/auth/admin/create-user`,
+        `${process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000"}/api/auth/admin/create-user`,
         {
           method: "POST",
           headers: {

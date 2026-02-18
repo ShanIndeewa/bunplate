@@ -3,6 +3,8 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
 
+import { authMiddleware } from "@/middlewares/auth.middleware";
+
 import {
   errorMessageSchema,
   getPaginatedSchema,
@@ -23,6 +25,7 @@ export const list = createRoute({
   summary: "List user profiles (current user)",
   path: "/",
   method: "get",
+  middleware: [authMiddleware],
   request: {
     query: queryParamsSchema,
   },
@@ -44,6 +47,7 @@ export const getById = createRoute({
   summary: "Get user profile by ID",
   method: "get",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
   },
@@ -66,6 +70,7 @@ export const create = createRoute({
   summary: "Create user profile",
   method: "post",
   path: "/",
+  middleware: [authMiddleware],
   request: {
     body: jsonContentRequired(
       userProfileInsertSchema,
@@ -90,6 +95,7 @@ export const update = createRoute({
   summary: "Update user profile",
   method: "patch",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
     body: jsonContentRequired(
@@ -113,6 +119,7 @@ export const remove = createRoute({
   summary: "Delete user profile",
   method: "delete",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
   },

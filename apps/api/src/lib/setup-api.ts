@@ -33,8 +33,8 @@ export function setupAPI(): OpenAPIHono<APIBindings> {
         const allowedOrigins = [
           "http://localhost:3000",
           "http://localhost:4000",
-          "https://bunplate-web.vercel.app",
-          "https://bunplate-api.vercel.app"
+          // "https://bunplate-web.vercel.app",
+          // "https://bunplate-api.vercel.app"
         ];
         // Allow requests with no origin (like mobile apps or curl)
         if (!origin) return process.env.CLIENT_URL!;

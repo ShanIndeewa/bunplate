@@ -11,6 +11,8 @@ export const authMiddleware: MiddlewareHandler<APIBindings> = async (
   const auth = getAuth();
   const session = await auth.api.getSession({ headers: c.req.raw.headers });
 
+  console.log("[auth] cookie:", c.req.raw.headers.get("cookie") ? "present" : "missing", "| session:", session ? "valid" : "null");
+
   if (!session) {
     c.set("session", null);
     c.set("user", null);

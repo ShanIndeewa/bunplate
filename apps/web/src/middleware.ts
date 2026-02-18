@@ -1,6 +1,5 @@
 import { betterFetch } from "@better-fetch/fetch";
 import { NextResponse, type NextRequest } from "next/server";
-import { getUserType } from "./lib/helpers/get-user-type";
 
 type Session = {
   user: {
@@ -27,6 +26,16 @@ const authRoutes = [
 
 const protectedRoutes = ["/admin", "/account"];
 
+/**
+ * Derive user type directly from the already-fetched session.
+ * This avoids a second network call and works reliably in Edge middleware.
+ */
+function deriveUserType(session: Session): "systemAdmin" | "companyOwner" | "user" {
+  if (session.user.role === "admin") return "systemAdmin";
+  if (session.session.activeOrganizationId) return "companyOwner";
+  return "user";
+}
+
 export default async function authMiddleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const isProtectedPath = protectedRoutes.some((route) =>
@@ -37,30 +46,27 @@ export default async function authMiddleware(request: NextRequest) {
   requestHeaders.set("x-url", request.url);
 
   if (authRoutes.includes(pathname) || isProtectedPath) {
-    // Fetch session
+    // Fetch session once — reuse everywhere below
     const { data: session } = await betterFetch<Session>(
       "/api/auth/get-session",
       {
-        baseURL: request.nextUrl.origin,
+        baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:4000",
         headers: {
-          //get the cookie from the request
           cookie: request.headers.get("cookie") || ""
         }
       }
     );
 
     // If Auth route and Already authenticated,
-    // Redirect back to appropiate path
+    // Redirect back to appropriate path
     if (authRoutes.includes(pathname) && session) {
-      const userType = await getUserType();
+      const userType = deriveUserType(session);
 
       if (userType === "systemAdmin") {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
 
-      if (userType === "user" || userType === "companyOwner") {
-        return NextResponse.redirect(new URL("/account", request.url));
-      }
+      return NextResponse.redirect(new URL("/account", request.url));
     }
 
     // If protected route and Not authenticated,
@@ -71,20 +77,21 @@ export default async function authMiddleware(request: NextRequest) {
 
     // If authenticated, and trying to access '/account'
     if (session && pathname.startsWith("/account")) {
+      // Admin users should always go to /admin
       if (session.user.role === "admin") {
         return NextResponse.redirect(new URL("/admin", request.url));
       }
 
-      /***
-       * Check if user is a company owner and active organization is set.
+      /**
+       * If user has no active organization, try to set one.
+       * Forward the Set-Cookie from the org-switch response so it actually persists.
        */
       if (!session.session.activeOrganizationId) {
         const { data: organizationsList } = await betterFetch(
           "/api/auth/organization/list",
           {
-            baseURL: request.nextUrl.origin,
+            baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:4000",
             headers: {
-              //get the cookie from the request
               cookie: request.headers.get("cookie") || ""
             }
           }
@@ -93,11 +100,11 @@ export default async function authMiddleware(request: NextRequest) {
         const orgId = (organizationsList as any[])?.[0]?.id as string;
         const orgRole = (organizationsList as any[])?.[0]?.role as string;
 
-        if (orgRole !== "member") {
+        if (orgId && orgRole !== "member") {
           const switchRes = await betterFetch(
             "/api/auth/organization/set-active",
             {
-              baseURL: request.nextUrl.origin,
+              baseURL: process.env.NEXT_PUBLIC_BETTER_AUTH_URL || "http://localhost:4000",
               headers: {
                 cookie: request.headers.get("cookie") || ""
               },
@@ -106,24 +113,30 @@ export default async function authMiddleware(request: NextRequest) {
             }
           );
 
+          // Forward Set-Cookie headers so the browser actually persists the org switch
+          const response = NextResponse.next();
+          const setCookie = (switchRes as any)?.headers?.get?.("set-cookie");
+          if (setCookie) {
+            response.headers.set("set-cookie", setCookie);
+          }
+
           console.log(
             `Agent '${session.session.userId}' switched to organization: '${orgId}'`
           );
+          return response;
         }
       }
     }
 
     // If authenticated, and trying to access '/admin'
     if (session && pathname.startsWith("/admin")) {
-      const userType = await getUserType();
-
-      if (userType === "systemAdmin") {
+      // Use the same session we already fetched — no separate getUserType() call
+      if (session.user.role === "admin") {
         return NextResponse.next();
       }
 
-      if (userType === "companyOwner" || userType === "user") {
-        return NextResponse.redirect(new URL("/account", request.url));
-      }
+      // Non-admin users get sent to /account
+      return NextResponse.redirect(new URL("/account", request.url));
     }
   }
 
