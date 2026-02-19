@@ -82,17 +82,15 @@ export type Company = z.infer<typeof companySchema>;
 
 export const companyInsertSchema = companySchema.omit({
   id: true,
-  organizationId: true,
-  createdBy: true,
   createdAt: true,
   updatedAt: true,
+}).extend({
+  organizationId: z.string().optional(),
+  createdBy: z.string().optional(),
 });
 
-export const companyInsertByAdminSchema = companySchema.omit({
-  id: true,
-  createdAt: true,
-  updatedAt: true,
-});
+// Keep alias for backward compatibility
+export const companyInsertByAdminSchema = companyInsertSchema;
 
 export const companyUpdateSchema = companySchema
   .omit({

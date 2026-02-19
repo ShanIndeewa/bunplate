@@ -1,5 +1,5 @@
 import type { APIRouteHandler } from "./types";
-import type { CreateCompanyTypeRoute, CreateNewCompanyByAdminRoute, CreateNewCompanyRoute, DeleteCompanyRoute, GetCompanyByIdRoute, GetMyCompanyRoute, ListAllCompaniesRoute, ListAllCompanyTypesRoute, RemoveCompanyTypeRoute, UpdateCompanyRoute, UpdateCompanyTypeRoute } from "../../routes/company/company.routes";
+import type { CreateCompanyTypeRoute, CreateNewCompanyRoute, DeleteCompanyRoute, GetCompanyByIdRoute, GetMyCompanyRoute, ListAllCompaniesRoute, ListAllCompanyTypesRoute, RemoveCompanyTypeRoute, UpdateCompanyRoute, UpdateCompanyTypeRoute } from "../../routes/company/company.routes";
 /**
  * ================================================================
  * Company Types Handlers
@@ -16,7 +16,6 @@ export declare const removeCompanyTypeHandler: APIRouteHandler<RemoveCompanyType
  */
 export declare const listAllCompaniesHandler: APIRouteHandler<ListAllCompaniesRoute>;
 export declare const createNewCompanyHandler: APIRouteHandler<CreateNewCompanyRoute>;
-export declare const createNewCompanyByAdminHandler: APIRouteHandler<CreateNewCompanyByAdminRoute>;
 export declare const getCompanyByIdHandler: APIRouteHandler<GetCompanyByIdRoute>;
 export declare const getMyCompanyHandler: APIRouteHandler<GetMyCompanyRoute>;
 export declare const updateCompanyHandler: APIRouteHandler<UpdateCompanyRoute>;

@@ -1,4 +1,4 @@
-import { user } from "@repo/database";
+import { user } from "core/database/schema";
 import { createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 

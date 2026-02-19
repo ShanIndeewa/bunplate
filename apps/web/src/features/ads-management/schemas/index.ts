@@ -1,7 +1,7 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-import { ad } from "@repo/database";
+import { ad } from "core/database/schema";
 
 // Full row (select) schema — Date objects for timestamps
 export const adSchema = createSelectSchema(ad);

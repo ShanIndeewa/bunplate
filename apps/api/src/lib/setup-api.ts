@@ -1,6 +1,5 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { cors } from "hono/cors";
-import { defaultHook } from "stoker/openapi";
 import { notFound, onError, serveEmojiFavicon } from "stoker/middlewares";
 
 import { getAuth } from "core/auth/setup";
@@ -14,7 +13,19 @@ import { logger } from "hono/logger";
 export function createAPIRouter(): OpenAPIHono<APIBindings> {
   return new OpenAPIHono<APIBindings>({
     strict: false,
-    defaultHook
+    defaultHook: (result, c) => {
+      if (!result.success) {
+        const errors = result.error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+        }));
+        console.error("[validation] Request validation failed:", JSON.stringify(errors));
+        return c.json(
+          { success: false, errors },
+          422
+        );
+      }
+    }
   });
 }
 
@@ -66,8 +77,15 @@ export function setupAPI(): OpenAPIHono<APIBindings> {
     return auth.handler(c.req.raw);
   });
 
-  // Error Handling Middleware
-  api.onError(onError);
+  // Error Handling Middleware — log full error for debugging
+  api.onError((err, c) => {
+    console.error("[onError] Unhandled error:", err.message || err);
+    console.error("[onError] Stack:", err.stack);
+    return c.json(
+      { message: err.message || "Internal Server Error" },
+      500
+    );
+  });
 
   // Not Found Middleware
   api.notFound(notFound);

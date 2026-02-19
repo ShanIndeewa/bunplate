@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAppForm } from "@/components/ui/tanstack-form";
-import { cn } from "@/components/lib/utils";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useId } from "react";
@@ -21,7 +21,7 @@ import { CiFacebook } from "react-icons/ci";
 import { toast } from "sonner";
 import { signinSchema, type SigninSchemaT } from "../schemas";
 
-export function SiginForm({
+export function SigninForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {

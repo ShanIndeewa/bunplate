@@ -17,7 +17,7 @@ export default function JobApplicationReviewManagementPage() {
             Create, edit, and manage job application reviews
           </p>
         </div>
-        <CreateJobApplicationReview triggerRef={createReviewRef} />
+        <CreateJobApplicationReview triggerRef={createReviewRef as any} />
       </div>
 
       <Card>

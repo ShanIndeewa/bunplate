@@ -8,7 +8,7 @@ import {
   companyPolicies,
   companyTypes,
   industries,
-} from "@repo/database";
+} from "core/database/schema";
 
 // ==================== Company Type Schemas ====================
 export const companyTypeSchema = createSelectSchema(companyTypes);

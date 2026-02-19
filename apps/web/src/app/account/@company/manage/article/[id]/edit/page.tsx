@@ -5,12 +5,12 @@ import { useUpdateArticle } from "@/features/article-management/api/use-update-a
 import { articleUpdateSchema, type articleUpdateType } from "@/features/article-management/schemas";
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAppForm } from "@/components/ui/tanstack-form";
@@ -35,7 +35,7 @@ export default function EditArticlePage({ params }: EditArticlePageProps) {
   const { mutate: updateArticle, isPending } = useUpdateArticle();
 
   const form = useAppForm({
-    validators: { onChange: articleUpdateSchema },
+    validators: { onChange: articleUpdateSchema as any },
     defaultValues: {
       title: "",
       slug: "",

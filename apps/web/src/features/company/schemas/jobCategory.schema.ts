@@ -3,7 +3,7 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
 // Adjust the import path to wherever your table is exported from
-import { jobCategory } from "@repo/database"; // or: "@/server/db/schema/job-category"
+import { jobCategory } from "core/database/schema"; // or: "@/server/db/schema/job-category"
 
 // Define the job category type enum for validation
 export const jobCategoryTypeSchema = z.enum([

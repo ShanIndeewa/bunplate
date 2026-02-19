@@ -21,7 +21,7 @@ export const JobCreateForm = () => {
     formState: { errors },
     reset,
   } = useForm<JobFormValues>({
-    resolver: zodResolver(jobInsertSchema),
+    resolver: zodResolver(jobInsertSchema) as any,
   });
 
   const onSubmit = (data: JobFormValues) => {

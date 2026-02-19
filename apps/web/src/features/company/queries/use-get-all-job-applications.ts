@@ -1,5 +1,5 @@
 import { getClient } from "@/lib/rpc/client";
-import type { JobApplication } from "@repo/database";
+import type { JobApplication } from "core/database/schema";
 import { useQuery } from "@tanstack/react-query";
 
 // Extended type that includes user data

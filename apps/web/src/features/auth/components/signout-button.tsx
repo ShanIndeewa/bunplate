@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 import { authClient } from "@/lib/auth-client";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/components/lib/utils";
+import { cn } from "@/lib/utils";
 
 type Props = {
   className?: string;

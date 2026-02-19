@@ -45,20 +45,20 @@ export function ForgotPasswordForm({
   );
 
   const handleForgotPassword = async (values: ForgotPasswordSchemaT) => {
-    await authClient.requestPasswordReset({
+    await authClient.forgetPassword({
       email: values.email,
       redirectTo: "/reset-password",
       fetchOptions: {
         onRequest() {
           toast.loading("Requesting Password Reset...", { id: toastId });
         },
-        onSuccess() {
+        onSuccess(ctx) {
           toast.success("Password reset link sent!", {
             id: toastId,
             description: "Check your email inbox for get the link"
           });
         },
-        onError(ctx: { error: { message: string } }) {
+        onError(ctx) {
           toast.error(`Failed: ${ctx.error.message}`, { id: toastId });
         }
       }

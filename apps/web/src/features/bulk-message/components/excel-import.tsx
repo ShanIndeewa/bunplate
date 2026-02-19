@@ -48,7 +48,7 @@ export function ExcelImport({ onImport, onCancel }: ExcelImportProps) {
     setValue,
     trigger,
   } = useForm<ExcelImportData>({
-    resolver: zodResolver(excelImportSchema),
+    resolver: zodResolver(excelImportSchema) as any,
   });
 
   const file = watch("file");

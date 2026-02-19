@@ -8,15 +8,15 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAppForm } from "@/components/ui/tanstack-form";
-import { cn } from "@/components/lib/utils";
+import { cn } from "@/lib/utils";
 import { useQueryState } from "nuqs";
 
 import { authClient } from "@/lib/auth-client";

@@ -3,7 +3,7 @@ import { headers } from "next/headers";
 
 import { Separator } from "@/components/ui/separator";
 import { authClient } from "@/lib/auth-client";
-import { SignoutButton } from "@/modules/auth/components/signout-button";
+import { SignoutButton } from "@/features/auth/components/signout-button";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 

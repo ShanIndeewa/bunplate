@@ -34,9 +34,9 @@ export const list: APIRouteHandler<ListRoute> = async (c) => {
 
   const where = session.activeOrganizationId
     ? and(
-        eq(userProfiles.userId, session.userId),
-        eq(userProfiles.organizationId, session.activeOrganizationId)
-      )
+      eq(userProfiles.userId, session.userId),
+      eq(userProfiles.organizationId, session.activeOrganizationId)
+    )
     : eq(userProfiles.userId, session.userId);
 
   const results = await db.query.userProfiles.findMany({ where });
@@ -75,18 +75,33 @@ export const create: APIRouteHandler<CreateRoute> = async (c) => {
 
   const now = new Date();
 
-  const [inserted] = await db
-    .insert(userProfiles)
-    .values({
-      ...body,
-      organizationId: session.activeOrganizationId ?? null,
-      userId: session.userId,
-      createdAt: now,
-      updatedAt: now,
-    })
-    .returning();
+  try {
+    const [inserted] = await db
+      .insert(userProfiles)
+      .values({
+        ...body,
+        organizationId: session.activeOrganizationId ?? null,
+        userId: session.userId,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .returning();
 
-  return c.json(inserted, HttpStatusCodes.CREATED);
+    if (!inserted) {
+      return c.json(
+        { message: "Failed to create profile" },
+        HttpStatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+
+    return c.json(inserted, HttpStatusCodes.CREATED);
+  } catch (error: any) {
+    console.error("[create-profile] DB error:", error.message || error);
+    return c.json(
+      { message: error.message || "Failed to create profile" },
+      HttpStatusCodes.INTERNAL_SERVER_ERROR
+    );
+  }
 };
 
 // 🔎 Get one (must belong to the logged-in user)
@@ -104,14 +119,14 @@ export const getOne: APIRouteHandler<GetByIdRoute> = async (c) => {
 
   const where = session.activeOrganizationId
     ? and(
-        eq(userProfiles.id, String(id)),
-        eq(userProfiles.userId, session.userId),
-        eq(userProfiles.organizationId, session.activeOrganizationId)
-      )
+      eq(userProfiles.id, String(id)),
+      eq(userProfiles.userId, session.userId),
+      eq(userProfiles.organizationId, session.activeOrganizationId)
+    )
     : and(
-        eq(userProfiles.id, String(id)),
-        eq(userProfiles.userId, session.userId)
-      );
+      eq(userProfiles.id, String(id)),
+      eq(userProfiles.userId, session.userId)
+    );
 
   const profile = await db.query.userProfiles.findFirst({ where });
 
@@ -141,14 +156,14 @@ export const patch: APIRouteHandler<UpdateRoute> = async (c) => {
 
   const where = session.activeOrganizationId
     ? and(
-        eq(userProfiles.id, String(id)),
-        eq(userProfiles.userId, session.userId),
-        eq(userProfiles.organizationId, session.activeOrganizationId)
-      )
+      eq(userProfiles.id, String(id)),
+      eq(userProfiles.userId, session.userId),
+      eq(userProfiles.organizationId, session.activeOrganizationId)
+    )
     : and(
-        eq(userProfiles.id, String(id)),
-        eq(userProfiles.userId, session.userId)
-      );
+      eq(userProfiles.id, String(id)),
+      eq(userProfiles.userId, session.userId)
+    );
 
   const [updated] = await db
     .update(userProfiles)
@@ -184,14 +199,14 @@ export const remove: APIRouteHandler<RemoveRoute> = async (c) => {
 
   const where = session.activeOrganizationId
     ? and(
-        eq(userProfiles.id, String(id)),
-        eq(userProfiles.userId, session.userId),
-        eq(userProfiles.organizationId, session.activeOrganizationId)
-      )
+      eq(userProfiles.id, String(id)),
+      eq(userProfiles.userId, session.userId),
+      eq(userProfiles.organizationId, session.activeOrganizationId)
+    )
     : and(
-        eq(userProfiles.id, String(id)),
-        eq(userProfiles.userId, session.userId)
-      );
+      eq(userProfiles.id, String(id)),
+      eq(userProfiles.userId, session.userId)
+    );
 
   const [deleted] = await db.delete(userProfiles).where(where).returning();
 

@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useAppForm } from "@/components/ui/tanstack-form";
-import { cn } from "@/components/lib/utils";
+import { cn } from "@/lib/utils";
 
 import { authClient } from "@/lib/auth-client";
 import { resetPasswordSchema, type ResetPasswordSchemaT } from "../schemas";

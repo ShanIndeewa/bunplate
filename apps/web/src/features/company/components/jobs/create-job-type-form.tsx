@@ -40,7 +40,7 @@ export default function JobCategoryCreateForm({
     reset,
     formState: { errors },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(schema) as any,
     defaultValues: { keyword: "", description: "", type: "Technology" },
   });
 

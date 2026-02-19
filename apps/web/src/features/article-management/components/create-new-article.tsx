@@ -37,7 +37,7 @@ const defaultValues: Partial<articleInsertType> = {
 export function CreateArticle({
   triggerRef,
 }: {
-  triggerRef?: React.RefObject<HTMLButtonElement>;
+  triggerRef?: React.RefObject<HTMLButtonElement | null>;
 }) {
   const router = useRouter();
   const queryClient = useQueryClient();

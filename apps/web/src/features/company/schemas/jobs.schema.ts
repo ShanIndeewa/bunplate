@@ -1,7 +1,7 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-import { jobs } from "@repo/database";
+import { jobs } from "core/database/schema";
 
 // -------------------
 // Select schema (full job object)

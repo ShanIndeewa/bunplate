@@ -11,7 +11,6 @@ import { companies, companyTypes } from "core/database/schema";
 
 import type {
   CreateCompanyTypeRoute,
-  CreateNewCompanyByAdminRoute,
   CreateNewCompanyRoute,
   DeleteCompanyRoute,
   GetCompanyByIdRoute,
@@ -224,7 +223,7 @@ export const listAllCompaniesHandler: APIRouteHandler<
   );
 };
 
-// Create new company
+// Create new company (unified: works for both admin and regular user)
 export const createNewCompanyHandler: APIRouteHandler<
   CreateNewCompanyRoute
 > = async (c) => {
@@ -239,97 +238,75 @@ export const createNewCompanyHandler: APIRouteHandler<
       HttpStatusCodes.UNAUTHORIZED
     );
 
-  if (user.role === "user" && !(session as SessionWithOrg).activeOrganizationId)
+  const isAdmin = user.role === "admin";
+
+  // Determine organizationId: admin can pass it in body, regular users use session
+  let organizationId: string;
+  if (isAdmin && body.organizationId) {
+    organizationId = body.organizationId;
+  } else if ((session as SessionWithOrg).activeOrganizationId) {
+    organizationId = (session as SessionWithOrg).activeOrganizationId!;
+  } else {
     return c.json(
-      { message: HttpStatusPhrases.FORBIDDEN },
+      { message: "Organization ID is required. Please set an active organization." },
       HttpStatusCodes.FORBIDDEN
     );
+  }
 
-  const [inserted] = await db
-    .insert(companies)
-    .values({
-      name: body.name,
-      street: body.street,
-      city: body.city,
-      state: body.state,
-      country: body.country,
-      postalCode: body.postalCode,
-      description: body.description ?? null,
-      status: body.status ?? "active",
-      brandName: body.brandName ?? null,
-      phone: body.phone ?? null,
-      email: body.email ?? null,
-      website: body.website ?? null,
-      logoUrl: body.logoUrl ?? null,
-      companyType: body.companyType ?? null,
-      industryId: body.industryId ?? null,
-      employeeCount: body.employeeCount ?? null,
-      organizationId: (session as SessionWithOrg).activeOrganizationId!,
-      createdBy: user.id,
-    })
-    .returning();
+  // Determine createdBy: admin can pass it in body, otherwise use logged-in user
+  const createdBy = (isAdmin && body.createdBy) ? body.createdBy : user.id;
 
-  if (!inserted)
+  try {
+    const [inserted] = await db
+      .insert(companies)
+      .values({
+        name: body.name,
+        street: body.street,
+        city: body.city,
+        state: body.state,
+        country: body.country,
+        postalCode: body.postalCode,
+        description: body.description ?? null,
+        status: body.status ?? "active",
+        brandName: body.brandName ?? null,
+        phone: body.phone ?? null,
+        email: body.email ?? null,
+        website: body.website ?? null,
+        logoUrl: body.logoUrl ?? null,
+        companyType: body.companyType ?? null,
+        industryId: body.industryId ?? null,
+        employeeCount: body.employeeCount ?? null,
+        organizationId,
+        createdBy,
+      })
+      .returning();
+
+    if (!inserted)
+      return c.json(
+        { message: "Failed to create company" },
+        HttpStatusCodes.INTERNAL_SERVER_ERROR
+      );
+
+    // Re-fetch with relations to match the response schema
+    const companyWithRelations = await db.query.companies.findFirst({
+      where: (fields, { eq }) => eq(fields.id, inserted.id),
+      with: {
+        branches: true,
+        images: true,
+        policies: true,
+        companyType: true,
+        industry: true,
+      },
+    });
+
+    return c.json(companyWithRelations as CompanySelectType, HttpStatusCodes.CREATED);
+  } catch (error: any) {
+    console.error("[create-company] Error:", error.message || error);
     return c.json(
-      { message: HttpStatusPhrases.INTERNAL_SERVER_ERROR },
+      { message: error.message || "Failed to create company" },
       HttpStatusCodes.INTERNAL_SERVER_ERROR
     );
-
-  return c.json(inserted as CompanySelectType, HttpStatusCodes.CREATED);
-};
-
-// Create new company by admin
-export const createNewCompanyByAdminHandler: APIRouteHandler<
-  CreateNewCompanyByAdminRoute
-> = async (c) => {
-  const db = c.get("db");
-  const body = c.req.valid("json");
-  const session = c.get("session");
-  const user = c.get("user");
-
-  if (!session || !user)
-    return c.json(
-      { message: HttpStatusPhrases.UNAUTHORIZED },
-      HttpStatusCodes.UNAUTHORIZED
-    );
-
-  if (user.role !== "admin")
-    return c.json(
-      { message: HttpStatusPhrases.FORBIDDEN },
-      HttpStatusCodes.FORBIDDEN
-    );
-
-  const [inserted] = await db
-    .insert(companies)
-    .values({
-      name: body.name,
-      street: body.street,
-      city: body.city,
-      state: body.state,
-      country: body.country,
-      postalCode: body.postalCode,
-      description: body.description ?? null,
-      status: body.status ?? "active",
-      brandName: body.brandName ?? null,
-      phone: body.phone ?? null,
-      email: body.email ?? null,
-      website: body.website ?? null,
-      logoUrl: body.logoUrl ?? null,
-      companyType: body.companyType ?? null,
-      industryId: body.industryId ?? null,
-      employeeCount: body.employeeCount ?? null,
-      organizationId: body.organizationId ?? null,
-      createdBy: body.createdBy ?? user.id,
-    })
-    .returning();
-
-  if (!inserted)
-    return c.json(
-      { message: HttpStatusPhrases.INTERNAL_SERVER_ERROR },
-      HttpStatusCodes.INTERNAL_SERVER_ERROR
-    );
-
-  return c.json(inserted as CompanySelectType, HttpStatusCodes.CREATED);
+  }
 };
 
 // Get company by ID

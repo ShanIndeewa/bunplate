@@ -1,4 +1,4 @@
-import { SignupForm } from "@/modules/auth/components/signup-form";
+import { SignupForm } from "@/features/auth/components/signup-form";
 // import { headers } from "next/headers";
 
 export default async function SignupPage() {

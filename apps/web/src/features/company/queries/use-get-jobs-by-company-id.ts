@@ -1,7 +1,7 @@
 import { getClient } from "@/lib/rpc/client";
 import { useQuery } from "@tanstack/react-query";
 import { z } from "zod";
-import { job, Job } from "../schemas/compny.jobs.scheam";
+import { job, Job } from "../schemas/company.jobs.schema";
 
 interface JobsResponse {
   data: any[];

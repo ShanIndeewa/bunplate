@@ -1,5 +1,6 @@
 "use client";
 
+import { AdminCreateCompanyDialog } from "@/features/admin/components/admin-create-company-dialog";
 import { deleteCompanyAction } from "@/features/company/queries/use-delete-company";
 import { useGetCompanies } from "@/features/company/queries/use-get-all-companies";
 import { updateCompanyAction } from "@/features/company/queries/use-update-company.action";
@@ -36,7 +37,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Building, Edit, Loader2, Trash2 } from "lucide-react";
+import { Building, Edit, Loader2, Plus, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -56,6 +57,7 @@ export default function AdminCompanyPage() {
   const [newStatus, setNewStatus] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [createDialogOpen, setCreateDialogOpen] = useState(false);
 
   const {
     data: companies,
@@ -134,6 +136,10 @@ export default function AdminCompanyPage() {
           <Badge variant="secondary" className="text-sm">
             Total: {companies?.meta?.totalCount || 0}
           </Badge>
+          <Button onClick={() => setCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Create Company
+          </Button>
         </div>
       </div>
 
@@ -391,6 +397,12 @@ export default function AdminCompanyPage() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Create Company Dialog */}
+      <AdminCreateCompanyDialog
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
+      />
     </div>
   );
 }

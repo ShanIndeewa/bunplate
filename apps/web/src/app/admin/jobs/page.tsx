@@ -2,7 +2,7 @@
 
 import { useGetCompanies } from "@/features/company/queries/use-get-all-companies";
 import { useGetJobsByCompanyId } from "@/features/company/queries/use-get-jobs-by-company-id";
-import { Job } from "@/features/company/schemas/compny.jobs.scheam";
+import { Job } from "@/features/company/schemas/company.jobs.schema";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

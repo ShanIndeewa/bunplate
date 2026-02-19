@@ -7,20 +7,20 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-    AlertCircle,
-    Briefcase,
-    CheckCircle,
-    Clock,
-    ExternalLink,
-    FileText,
-    Linkedin,
-    Mail,
-    MapPin,
-    Phone,
-    Star,
-    Upload,
-    User,
-    X
+  AlertCircle,
+  Briefcase,
+  CheckCircle,
+  Clock,
+  ExternalLink,
+  FileText,
+  Linkedin,
+  Mail,
+  MapPin,
+  Phone,
+  Star,
+  Upload,
+  User,
+  X
 } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -67,7 +67,7 @@ export default function JobApplicationModal({
     reset,
     watch,
   } = useForm<JobApplicationForm>({
-    resolver: zodResolver(jobApplicationSchema),
+    resolver: zodResolver(jobApplicationSchema) as any,
   });
 
   const onSubmit = async (data: JobApplicationForm) => {
@@ -183,11 +183,10 @@ export default function JobApplicationModal({
                     id="fullName"
                     {...register("fullName")}
                     placeholder="Enter your full name"
-                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${
-                      errors.fullName
+                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${errors.fullName
                         ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                         : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                    }`}
+                      }`}
                   />
                   {errors.fullName && (
                     <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -207,11 +206,10 @@ export default function JobApplicationModal({
                     type="email"
                     {...register("email")}
                     placeholder="Enter your email address"
-                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${
-                      errors.email
+                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${errors.email
                         ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                         : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                    }`}
+                      }`}
                   />
                   {errors.email && (
                     <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -231,11 +229,10 @@ export default function JobApplicationModal({
                     type="tel"
                     {...register("phone")}
                     placeholder="Enter your phone number"
-                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${
-                      errors.phone
+                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${errors.phone
                         ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                         : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                    }`}
+                      }`}
                   />
                   {errors.phone && (
                     <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -254,11 +251,10 @@ export default function JobApplicationModal({
                     id="address"
                     {...register("address")}
                     placeholder="Enter your address"
-                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${
-                      errors.address
+                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${errors.address
                         ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                         : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                    }`}
+                      }`}
                   />
                   {errors.address && (
                     <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -292,11 +288,10 @@ export default function JobApplicationModal({
                       id="linkedin"
                       {...register("linkedin")}
                       placeholder="https://linkedin.com/in/yourprofile"
-                      className={`h-12 pl-12 rounded-xl border-2 transition-all duration-200 ${
-                        errors.linkedin
+                      className={`h-12 pl-12 rounded-xl border-2 transition-all duration-200 ${errors.linkedin
                           ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                           : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                      }`}
+                        }`}
                     />
                   </div>
                   {errors.linkedin && (
@@ -318,11 +313,10 @@ export default function JobApplicationModal({
                       id="portfolio"
                       {...register("portfolio")}
                       placeholder="https://yourportfolio.com"
-                      className={`h-12 pl-12 rounded-xl border-2 transition-all duration-200 ${
-                        errors.portfolio
+                      className={`h-12 pl-12 rounded-xl border-2 transition-all duration-200 ${errors.portfolio
                           ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                           : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                      }`}
+                        }`}
                     />
                   </div>
                   {errors.portfolio && (
@@ -397,11 +391,10 @@ export default function JobApplicationModal({
                   {...register("coverLetter")}
                   placeholder="Write a compelling cover letter explaining your interest and qualifications for this role. Be specific about how your skills and experience align with the job requirements..."
                   rows={6}
-                  className={`rounded-xl border-2 transition-all duration-200 resize-none ${
-                    errors.coverLetter
+                  className={`rounded-xl border-2 transition-all duration-200 resize-none ${errors.coverLetter
                       ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                       : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                  }`}
+                    }`}
                 />
                 <div className="flex justify-between items-center">
                   {errors.coverLetter ? (
@@ -416,9 +409,8 @@ export default function JobApplicationModal({
                     </p>
                   )}
                   <div className="flex items-center gap-2">
-                    <div className={`w-2 h-2 rounded-full ${
-                      (watch("coverLetter")?.length || 0) >= 50 ? "bg-green-500" : "bg-gray-300"
-                    }`} />
+                    <div className={`w-2 h-2 rounded-full ${(watch("coverLetter")?.length || 0) >= 50 ? "bg-green-500" : "bg-gray-300"
+                      }`} />
                     <p className="text-gray-400 text-sm">
                       {watch("coverLetter")?.length || 0}/2000
                     </p>
@@ -446,11 +438,10 @@ export default function JobApplicationModal({
                     id="source"
                     {...register("source")}
                     placeholder="e.g., LinkedIn, Company Website, Referral"
-                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${
-                      errors.source
+                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${errors.source
                         ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                         : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                    }`}
+                      }`}
                   />
                   {errors.source && (
                     <div className="flex items-center gap-2 text-red-600 text-sm">
@@ -468,11 +459,10 @@ export default function JobApplicationModal({
                     id="referralCode"
                     {...register("referralCode")}
                     placeholder="Enter referral code"
-                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${
-                      errors.referralCode
+                    className={`h-12 rounded-xl border-2 transition-all duration-200 ${errors.referralCode
                         ? "border-red-300 focus:border-red-500 focus:ring-red-100"
                         : "border-gray-200 focus:border-green-500 focus:ring-green-100"
-                    }`}
+                      }`}
                   />
                   {errors.referralCode && (
                     <div className="flex items-center gap-2 text-red-600 text-sm">

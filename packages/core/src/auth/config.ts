@@ -3,7 +3,7 @@ import { betterAuth } from "better-auth";
 
 import { type Database } from "../database";
 import * as authSchema from "../database/schema/auth.schema";
-import { admin, openAPI } from "better-auth/plugins";
+import { admin, openAPI, organization } from "better-auth/plugins";
 
 export interface AuthConfigurations {
   database: Database;
@@ -31,7 +31,7 @@ export function configAuth(config: AuthConfigurations) {
       usePlural: true
     }),
     secret: config.secret,
-    plugins: [admin(), openAPI(), ...(config.plugins || [])],
+    plugins: [admin(), openAPI(), organization(), ...(config.plugins || [])],
 
     emailAndPassword: {
       enabled: true
@@ -50,9 +50,9 @@ export function configAuth(config: AuthConfigurations) {
       // Enable cross-subdomain cookies for Vercel deployment
       crossSubDomainCookies: isProduction
         ? {
-            enabled: true,
-            domain: ".vercel.app" // Share cookies across *.vercel.app subdomains
-          }
+          enabled: true,
+          domain: ".vercel.app" // Share cookies across *.vercel.app subdomains
+        }
         : undefined,
       defaultCookieAttributes: {
         sameSite: isProduction ? "none" : "lax",

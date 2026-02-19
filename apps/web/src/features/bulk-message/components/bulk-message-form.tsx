@@ -46,7 +46,7 @@ export function BulkMessageForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<BulkMessageFormData>({
-    resolver: zodResolver(bulkMessageFormSchema),
+    resolver: zodResolver(bulkMessageFormSchema) as any,
     defaultValues: initialData || {
       note: "",
       phoneNumber: "",

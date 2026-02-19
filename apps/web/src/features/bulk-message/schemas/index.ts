@@ -1,7 +1,7 @@
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import { z } from "zod";
 
-import { bulkMessage } from "@repo/database";
+import { bulkMessage } from "core/database/schema";
 
 export const bulkMessageSchema = createSelectSchema(bulkMessage);
 
