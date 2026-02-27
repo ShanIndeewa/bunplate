@@ -28,13 +28,25 @@ export function configAuth(config: AuthConfigurations) {
     database: drizzleAdapter(config.database, {
       provider: "pg",
       schema: authSchema,
-      usePlural: true
+      // usePlural: true
     }),
     secret: config.secret,
-    plugins: [admin(), openAPI(), organization(), ...(config.plugins || [])],
+    plugins: [ admin(), openAPI(), organization({
+      allowUserToCreateOrganization() {
+        // TODO: In future, Allow permissions based on user's subscription
+        return true;
+      }
+    }), ...(config.plugins || [])],
 
     emailAndPassword: {
       enabled: true
+    },
+
+    socialProviders: {
+      // google: {
+      //   clientId: process.env.GOOGLE_CLIENT_ID!,
+      //   clientSecret: process.env.GOOGLE_CLIENT_SECRET!
+      // }
     },
 
     advanced: {
@@ -48,17 +60,21 @@ export function configAuth(config: AuthConfigurations) {
         }
       },
       // Enable cross-subdomain cookies for Vercel deployment
-      crossSubDomainCookies: isProduction
-        ? {
-          enabled: true,
-          domain: ".vercel.app" // Share cookies across *.vercel.app subdomains
-        }
-        : undefined,
+      // crossSubDomainCookies: isProduction
+      //   ? {
+      //     enabled: true,
+      //     domain: ".vercel.app" // Share cookies across *.vercel.app subdomains
+      //   }
+      //   : undefined,
+      crossSubDomainCookies: {
+        enabled: true,
+        // domain: ".vercel.app"
+      }, 
       defaultCookieAttributes: {
-        sameSite: isProduction ? "none" : "lax",
-        secure: isProduction,
+        sameSite: "lax",
+        // secure: isProduction,
         httpOnly: true,
-        partitioned: isProduction // New browser standards will mandate this for foreign cookies
+        // partitioned: isProduction // New browser standards will mandate this for foreign cookies
       }
     }
   });
