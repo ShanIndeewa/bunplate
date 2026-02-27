@@ -14,19 +14,34 @@ export const useAdminCreateCompany = () => {
 
     const mutation = useMutation({
         mutationFn: async (values: CompanyInsertByAdminType) => {
-            const rpcClient = await getClient();
-
-            const response = await rpcClient.api.companies.$post({
-                json: values,
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || "Failed to create company");
+            try {
+                const rpcClient = await getClient();
+                const response = await rpcClient.api.companies.$post({
+                    json: values,
+                });
+                if (!response.ok) {
+                    let errorMsg = "Failed to create company";
+                    try {
+                        const errorData = await response.json();
+                        errorMsg = errorData.message || errorMsg;
+                        // Optionally log backend error details
+                        if (errorData.stack) {
+                            // eslint-disable-next-line no-console
+                            console.error("[AdminCreateCompany] Backend error:", errorData.stack);
+                        }
+                    } catch (jsonErr) {
+                        // eslint-disable-next-line no-console
+                        console.error("[AdminCreateCompany] Error parsing backend error response", jsonErr);
+                    }
+                    throw new Error(errorMsg);
+                }
+                const data = await response.json();
+                return data;
+            } catch (err: any) {
+                // eslint-disable-next-line no-console
+                console.error("[AdminCreateCompany] Caught error:", err);
+                throw err;
             }
-
-            const data = await response.json();
-            return data;
         },
         onMutate: () => {
             toast.loading("Creating company...", { id: toastId });

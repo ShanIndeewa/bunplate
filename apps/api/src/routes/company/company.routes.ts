@@ -209,6 +209,10 @@ export const createNewCompanyRoute = createRoute({
       errorMessageSchema,
       "Forbidden access"
     ),
+    [HttpStatusCodes.BAD_REQUEST]: jsonContent(
+      errorMessageSchema,
+      "Invalid ID or input"
+    ),
     [HttpStatusCodes.INTERNAL_SERVER_ERROR]: jsonContent(
       errorMessageSchema,
       "Failed to create"

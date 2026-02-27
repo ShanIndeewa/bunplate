@@ -1,5 +1,6 @@
 import { getClient } from "@/lib/rpc/client";
 import { useQuery } from "@tanstack/react-query";
+import { type CompanySelectType } from "core/zod";
 
 export interface CompanyFilterParams {
   page?: number;
@@ -8,6 +9,16 @@ export interface CompanyFilterParams {
   sort?: "desc" | "asc" | undefined;
   companyType?: string | null;
   industryId?: string | null;
+}
+
+export interface CompaniesResponse {
+  data: CompanySelectType[];
+  meta: {
+    currentPage: number;
+    limit: number;
+    totalCount: number;
+    totalPages: number;
+  };
 }
 
 export const useGetCompanies = (params: CompanyFilterParams) => {
@@ -45,7 +56,7 @@ export const useGetCompanies = (params: CompanyFilterParams) => {
       }
 
       const companies = await companiesRes.json();
-      return companies;
+      return companies as CompaniesResponse;
     },
   });
 

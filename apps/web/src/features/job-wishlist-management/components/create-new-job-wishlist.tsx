@@ -32,7 +32,7 @@ import { jobWishlistInsertSchema, JobWishlistInsertType } from "../schemas";
 export function CreateJobWishlist({
   triggerRef,
 }: {
-  triggerRef?: React.RefObject<HTMLButtonElement>;
+  triggerRef?: React.RefObject<HTMLButtonElement | null>;
 }) {
   const [open, setOpen] = useState(false);
   const [jobSearch, setJobSearch] = useState("");

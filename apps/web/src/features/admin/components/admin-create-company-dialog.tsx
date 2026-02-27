@@ -119,16 +119,18 @@ export function AdminCreateCompanyDialog({ open, onOpenChange }: Props) {
                         <div className="grid grid-cols-2 gap-3">
                             <div className="space-y-2">
                                 <Label htmlFor="organizationId">
-                                    Organization ID <span className="text-red-500">*</span>
+                                    Organization ID
                                 </Label>
                                 <Input
                                     id="organizationId"
-                                    placeholder="Organization ID"
+                                    placeholder="Organization ID (Optional)"
                                     value={formData.organizationId}
                                     onChange={(e) => updateField("organizationId", e.target.value)}
-                                    required
                                     disabled={isPending}
                                 />
+                                <p className="text-[10px] text-muted-foreground">
+                                    Leave blank if not linked to an organization. Must be a valid ID if provided.
+                                </p>
                             </div>
                             <div className="space-y-2">
                                 <Label htmlFor="createdBy">
@@ -142,6 +144,9 @@ export function AdminCreateCompanyDialog({ open, onOpenChange }: Props) {
                                     required
                                     disabled={isPending}
                                 />
+                                <p className="text-[10px] text-muted-foreground">
+                                    Provide a valid User ID. Defaults to your ID if left blank.
+                                </p>
                             </div>
                         </div>
 

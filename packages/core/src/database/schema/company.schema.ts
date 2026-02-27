@@ -53,8 +53,7 @@ export const companies = pgTable(
       .default(sql`gen_random_uuid()`),
 
     organizationId: text("organization_id")
-      .references(() => organization.id, { onDelete: "cascade" })
-      .notNull(),
+      .references(() => organization.id, { onDelete: "cascade" }),
     createdBy: text("created_by")
       .references(() => user.id, { onDelete: "set null" })
       .notNull(),

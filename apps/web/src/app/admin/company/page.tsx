@@ -4,6 +4,7 @@ import { AdminCreateCompanyDialog } from "@/features/admin/components/admin-crea
 import { deleteCompanyAction } from "@/features/company/queries/use-delete-company";
 import { useGetCompanies } from "@/features/company/queries/use-get-all-companies";
 import { updateCompanyAction } from "@/features/company/queries/use-update-company.action";
+import { type CompanySelectType } from "core/zod";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,7 +54,7 @@ export default function AdminCompanyPage() {
   const [limit, setLimit] = useState(10);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState<any>(null);
+  const [selectedCompany, setSelectedCompany] = useState<CompanySelectType | null>(null);
   const [newStatus, setNewStatus] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -66,7 +67,7 @@ export default function AdminCompanyPage() {
     refetch,
   } = useGetCompanies({ page, limit });
 
-  const handleEditClick = (company: any) => {
+  const handleEditClick = (company: CompanySelectType) => {
     setSelectedCompany(company);
     setNewStatus(company.status || "active");
     setUpdateDialogOpen(true);
@@ -91,7 +92,7 @@ export default function AdminCompanyPage() {
     }
   };
 
-  const handleDeleteClick = (company: any) => {
+  const handleDeleteClick = (company: CompanySelectType) => {
     setSelectedCompany(company);
     setDeleteDialogOpen(true);
   };
@@ -167,7 +168,7 @@ export default function AdminCompanyPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {companies?.data?.map((company, index) => (
+                {companies?.data?.map((company: CompanySelectType, index) => (
                   <TableRow key={company.id}>
                     <TableCell className="font-medium">
                       {(page - 1) * limit + index + 1}

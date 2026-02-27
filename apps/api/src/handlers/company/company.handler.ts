@@ -240,13 +240,15 @@ export const createNewCompanyHandler: APIRouteHandler<
 
   const isAdmin = user.role === "admin";
 
-  // Determine organizationId: admin can pass it in body, regular users use session
-  let organizationId: string;
-  if (isAdmin && body.organizationId) {
-    organizationId = body.organizationId;
+  // Determine organizationId: admin can pass it in body (optional), regular users use session (mandatory)
+  let organizationId: string | null = null;
+  if (isAdmin) {
+    organizationId = body.organizationId || null;
   } else if ((session as SessionWithOrg).activeOrganizationId) {
     organizationId = (session as SessionWithOrg).activeOrganizationId!;
-  } else {
+  }
+
+  if (!isAdmin && !organizationId) {
     return c.json(
       { message: "Organization ID is required. Please set an active organization." },
       HttpStatusCodes.FORBIDDEN
@@ -255,6 +257,34 @@ export const createNewCompanyHandler: APIRouteHandler<
 
   // Determine createdBy: admin can pass it in body, otherwise use logged-in user
   const createdBy = (isAdmin && body.createdBy) ? body.createdBy : user.id;
+
+  // Pre-validate IDs to avoid generic "Failed query" errors
+  if (organizationId) {
+    const orgExists = await db.query.organization.findFirst({
+      where: (fields, { eq }) => eq(fields.id, organizationId as string),
+    });
+    if (!orgExists) {
+      return c.json(
+        { message: `Invalid Organization ID: "${organizationId}". No such organization found.` },
+        HttpStatusCodes.BAD_REQUEST
+      );
+    }
+  }
+
+  if (createdBy) {
+    const userExists = await db.query.user.findFirst({
+      where: (fields, { eq }) => eq(fields.id, createdBy),
+    });
+    if (!userExists) {
+      return c.json(
+        { message: `Invalid User ID: "${createdBy}". No such user found.` },
+        HttpStatusCodes.BAD_REQUEST
+      );
+    }
+  }
+
+  // Helper to convert empty strings to null
+  const emptyToNull = (val: any) => (val === "" ? null : val);
 
   try {
     const [inserted] = await db
@@ -266,16 +296,16 @@ export const createNewCompanyHandler: APIRouteHandler<
         state: body.state,
         country: body.country,
         postalCode: body.postalCode,
-        description: body.description ?? null,
+        description: emptyToNull(body.description),
         status: body.status ?? "active",
-        brandName: body.brandName ?? null,
-        phone: body.phone ?? null,
-        email: body.email ?? null,
-        website: body.website ?? null,
-        logoUrl: body.logoUrl ?? null,
-        companyType: body.companyType ?? null,
-        industryId: body.industryId ?? null,
-        employeeCount: body.employeeCount ?? null,
+        brandName: emptyToNull(body.brandName),
+        phone: emptyToNull(body.phone),
+        email: emptyToNull(body.email),
+        website: emptyToNull(body.website),
+        logoUrl: emptyToNull(body.logoUrl),
+        companyType: emptyToNull(body.companyType),
+        industryId: emptyToNull(body.industryId),
+        employeeCount: body.employeeCount || null,
         organizationId,
         createdBy,
       })
@@ -302,8 +332,23 @@ export const createNewCompanyHandler: APIRouteHandler<
     return c.json(companyWithRelations as CompanySelectType, HttpStatusCodes.CREATED);
   } catch (error: any) {
     console.error("[create-company] Error:", error.message || error);
+
+    // Check for specific database constraint violations
+    let errorMessage = "Failed to create company";
+    if (error.message?.includes("foreign key constraint")) {
+      if (error.message.includes("organization_id")) {
+        errorMessage = "Invalid Organization ID. Please ensure the organization exists.";
+      } else if (error.message.includes("created_by")) {
+        errorMessage = "Invalid User ID (Created By). Please ensure the user exists.";
+      } else {
+        errorMessage = "Database constraint violation. Please check your inputs.";
+      }
+    } else {
+      errorMessage = error.message || errorMessage;
+    }
+
     return c.json(
-      { message: error.message || "Failed to create company" },
+      { message: errorMessage },
       HttpStatusCodes.INTERNAL_SERVER_ERROR
     );
   }
