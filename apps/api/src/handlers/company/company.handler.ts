@@ -240,20 +240,14 @@ export const createNewCompanyHandler: APIRouteHandler<
 
   const isAdmin = user.role === "admin";
 
-  // Determine organizationId: admin can pass it in body (optional), regular users use session (mandatory)
+  // Determine organizationId: admin can pass it in body, regular users use session (if available)
   let organizationId: string | null = null;
   if (isAdmin) {
     organizationId = body.organizationId || null;
   } else if ((session as SessionWithOrg).activeOrganizationId) {
     organizationId = (session as SessionWithOrg).activeOrganizationId!;
   }
-
-  if (!isAdmin && !organizationId) {
-    return c.json(
-      { message: "Organization ID is required. Please set an active organization." },
-      HttpStatusCodes.FORBIDDEN
-    );
-  }
+  // organizationId is nullable in the DB — allow company creation without it
 
   // Determine createdBy: admin can pass it in body, otherwise use logged-in user
   const createdBy = (isAdmin && body.createdBy) ? body.createdBy : user.id;

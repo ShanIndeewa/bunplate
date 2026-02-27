@@ -87,6 +87,16 @@ export const companyInsertSchema = companySchema.omit({
 }).extend({
   organizationId: z.string().optional(),
   createdBy: z.string().optional(),
+  // Make nullable fields also accept undefined so clients don't need to send explicit null
+  description: z.string().nullable().optional(),
+  brandName: z.string().nullable().optional(),
+  phone: z.string().nullable().optional(),
+  email: z.string().nullable().optional(),
+  website: z.string().nullable().optional(),
+  logoUrl: z.string().nullable().optional(),
+  companyType: z.string().nullable().optional(),
+  industryId: z.string().nullable().optional(),
+  employeeCount: z.number().nullable().optional(),
 });
 
 // Keep alias for backward compatibility

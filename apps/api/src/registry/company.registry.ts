@@ -16,16 +16,18 @@ import * as policyRoutes from "../routes/company/policies.routes";
 
 const router = createAPIRouter()
   // -------------------- Company --------------------
-  .openapi(routes.updateCompanyRoute, handlers.updateCompanyHandler)
-  .openapi(routes.deleteCompanyRoute, handlers.deleteCompanyHandler)
-  .openapi(routes.getMyCompanyRoute, handlers.getMyCompanyHandler)
-  .openapi(routes.getCompanyByIdRoute, handlers.getCompanyByIdHandler)
-  .openapi(routes.listAllCompanyTypesRoute, handlers.listCompanyTypesHandler)
+  // Static paths MUST be registered before parameterized /:id routes
   .openapi(routes.listAllCompaniesRoute, handlers.listAllCompaniesHandler)
   .openapi(routes.createNewCompanyRoute, handlers.createNewCompanyHandler)
+  .openapi(routes.listAllCompanyTypesRoute, handlers.listCompanyTypesHandler)
   .openapi(routes.createNewCompanyTypeRoute, handlers.createCompanyTypeHandler)
   .openapi(routes.updateCompanyTypeRoute, handlers.updateCompanyTypeHandler)
   .openapi(routes.removeCompanyTypeRoute, handlers.removeCompanyTypeHandler)
+  .openapi(routes.getMyCompanyRoute, handlers.getMyCompanyHandler)
+  // Parameterized routes last
+  .openapi(routes.getCompanyByIdRoute, handlers.getCompanyByIdHandler)
+  .openapi(routes.updateCompanyRoute, handlers.updateCompanyHandler)
+  .openapi(routes.deleteCompanyRoute, handlers.deleteCompanyHandler)
 
   // -------------------- Company Images --------------------
   .openapi(

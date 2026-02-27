@@ -41,6 +41,8 @@ const defaultValues: Partial<CompanyInsertType> = {
   email: "",
   website: "",
   logoUrl: "",
+  description: "",
+  brandName: "",
   employeeCount: 0,
   status: "pending_approval",
 };
@@ -49,13 +51,9 @@ export function SetupCompany({ className }: Props) {
   const { mutate, isPending } = useCreateCompany();
   const router = useRouter();
 
-  const [selectedCompanyTypeID, setSelectedCompanyTypeID] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedCompanyType, setSelectedCompanyType] = useState<string | { name: string } | undefined>(undefined);
 
-  const [selectedIndustryID, setSelectedIndustryID] = useState<
-    string | undefined
-  >(undefined);
+  const [selectedIndustryID, setSelectedIndustryID] = useState<string | null>(null);
 
   const [searchInput, setSearchInput] = useState("");
   const [address, setAddress] = useState<AddressType>({
@@ -70,23 +68,49 @@ export function SetupCompany({ className }: Props) {
     lng: 0,
   });
 
+  // Helper: convert empty strings to null for nullable API fields
+  const emptyToNull = (val: any) => (val === "" || val === undefined ? null : val);
+
   const form = useAppForm({
     validators: { onChange: companyInsertSchema },
     defaultValues,
-    onSubmit: ({ value }) =>
-      mutate(
-        {
-          ...value,
-          companyType: selectedCompanyTypeID,
-          industryId: selectedIndustryID,
-        } as CompanyInsertType,
-        {
-          onSuccess: () => {
-            form.reset();
-            router.push("/account/manage");
-          },
-        }
-      ),
+    onSubmit: ({ value }) => {
+      // Resolve companyType: use ID if selected from API, null otherwise
+      let companyTypeValue: string | null = null;
+      if (typeof selectedCompanyType === 'object' && selectedCompanyType && 'id' in selectedCompanyType) {
+        companyTypeValue = (selectedCompanyType as any).id;
+      } else if (typeof selectedCompanyType === 'string') {
+        companyTypeValue = selectedCompanyType;
+      }
+
+      const payload = {
+        name: value.name ?? "",
+        street: value.street ?? "",
+        city: value.city ?? "",
+        state: value.state ?? "",
+        country: value.country ?? "",
+        postalCode: value.postalCode ?? "",
+        status: value.status ?? "pending_approval",
+        description: emptyToNull(value.description),
+        brandName: emptyToNull(value.brandName),
+        phone: emptyToNull(value.phone),
+        email: emptyToNull(value.email),
+        website: emptyToNull(value.website),
+        logoUrl: emptyToNull(value.logoUrl),
+        companyType: companyTypeValue,
+        industryId: selectedIndustryID ?? null,
+        employeeCount: typeof value.employeeCount === 'number' ? value.employeeCount : null,
+      };
+
+      console.log("[create-company] Submitting payload:", JSON.stringify(payload, null, 2));
+
+      mutate(payload as CompanyInsertType, {
+        onSuccess: () => {
+          form.reset();
+          router.push("/account/manage");
+        },
+      });
+    },
   });
 
   const handleSubmit = useCallback(
@@ -118,7 +142,7 @@ export function SetupCompany({ className }: Props) {
                 name="name"
                 children={(field) => (
                   <field.FormItem>
-                    <field.FormLabel>Company Name</field.FormLabel>
+                    <field.FormLabel>Company Name <span className="text-red-500">*</span></field.FormLabel>
                     <field.FormControl>
                       <Input
                         disabled={isPending}
@@ -178,7 +202,7 @@ export function SetupCompany({ className }: Props) {
                 name="phone"
                 children={(field) => (
                   <field.FormItem>
-                    <field.FormLabel>Phone</field.FormLabel>
+                    <field.FormLabel>Phone <span className="text-red-500">*</span></field.FormLabel>
                     <field.FormControl>
                       <Input
                         disabled={isPending}
@@ -196,7 +220,7 @@ export function SetupCompany({ className }: Props) {
                 name="email"
                 children={(field) => (
                   <field.FormItem>
-                    <field.FormLabel>Email</field.FormLabel>
+                    <field.FormLabel>Email <span className="text-red-500">*</span></field.FormLabel>
                     <field.FormControl>
                       <Input
                         type="email"
@@ -256,7 +280,7 @@ export function SetupCompany({ className }: Props) {
               name="street"
               children={(field) => (
                 <field.FormItem>
-                  <field.FormLabel>Street</field.FormLabel>
+                  <field.FormLabel>Street <span className="text-red-500">*</span></field.FormLabel>
                   <field.FormControl>
                     <Input
                       disabled={isPending}
@@ -349,11 +373,12 @@ export function SetupCompany({ className }: Props) {
 
             {/* Business Details */}
             <div className="grid grid-cols-2 gap-2">
-              <CompanyTypesDropdown
-                onSelect={(companyType) =>
-                  setSelectedCompanyTypeID(companyType?.id)
-                }
-              />
+              <div>
+                <label className="block mb-1 font-medium">Company Type <span className="text-red-500">*</span></label>
+                <CompanyTypesDropdown
+                  onSelect={setSelectedCompanyType}
+                />
+              </div>
               {/* Industry dropdown can be added here later */}
             </div>
 

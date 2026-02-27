@@ -23,7 +23,15 @@ export const useCreateCompany = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json() as any;
+        // Handle 422 validation errors from the API
+        if (errorData.errors && Array.isArray(errorData.errors)) {
+          const fieldErrors = errorData.errors
+            .map((e: any) => `${e.path}: ${e.message}`)
+            .join(", ");
+          console.error("[create-company] Validation errors:", errorData.errors);
+          throw new Error(`Validation failed — ${fieldErrors}`);
+        }
         throw new Error(errorData.message || "Failed to create company");
       }
 
