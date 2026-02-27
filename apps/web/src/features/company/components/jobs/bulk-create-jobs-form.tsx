@@ -28,6 +28,14 @@ export const JobCreateForm = () => {
     // Convert closingDate string to Date
     const formattedData = {
       ...data,
+      status: data.status || "open",
+      isRemote: data.isRemote ?? false,
+      jobCategoryId: data.jobCategoryId || null,
+      location: data.location || null,
+      experienceRequired: data.experienceRequired || null,
+      skills: data.skills || null,
+      salaryMin: data.salaryMin ?? null,
+      salaryMax: data.salaryMax ?? null,
       closingDate: data.closingDate ? new Date(data.closingDate) : null,
     };
 
@@ -131,6 +139,25 @@ export const JobCreateForm = () => {
           <option value="contract">Contract</option>
           <option value="internship">Internship</option>
         </select>
+      </div>
+
+      <div>
+        <label>Status</label>
+        <select {...register("status")} className="w-full border p-2">
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
+          <option value="paused">Paused</option>
+        </select>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          {...register("isRemote")}
+          id="isRemote"
+          className="h-4 w-4"
+        />
+        <label htmlFor="isRemote">Remote Job</label>
       </div>
 
       <div>

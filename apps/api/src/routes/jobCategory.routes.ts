@@ -4,6 +4,8 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
 
+import { authMiddleware } from "@/middlewares/auth.middleware";
+
 import {
     errorMessageSchema,
     getPaginatedSchema,
@@ -25,6 +27,7 @@ export const list = createRoute({
   summary: "List job categories (current user)",
   path: "/",
   method: "get",
+  middleware: [authMiddleware],
   request: {
     query: queryParamsSchema,
   },
@@ -46,6 +49,7 @@ export const listAll = createRoute({
   summary: "List all job categories",
   path: "/all",
   method: "get",
+  middleware: [authMiddleware],
   request: {
     query: queryParamsSchema, // optional pagination/filtering
   },
@@ -67,6 +71,7 @@ export const getTypes = createRoute({
   summary: "Get all available job category types",
   path: "/types",
   method: "get",
+  middleware: [authMiddleware],
   responses: {
     [HttpStatusCodes.OK]: jsonContent(
       z.array(z.string()),
@@ -81,6 +86,7 @@ export const getById = createRoute({
   summary: "Get job category by ID",
   method: "get",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
   },
@@ -103,6 +109,7 @@ export const create = createRoute({
   summary: "Create job category",
   method: "post",
   path: "/",
+  middleware: [authMiddleware],
   request: {
     body: jsonContentRequired(
       jobCategoryInsertSchema,
@@ -127,6 +134,7 @@ export const update = createRoute({
   summary: "Update job category",
   method: "patch",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
     body: jsonContentRequired(
@@ -150,6 +158,7 @@ export const remove = createRoute({
   summary: "Delete job category",
   method: "delete",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
   },

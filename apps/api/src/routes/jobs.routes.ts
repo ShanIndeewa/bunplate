@@ -3,6 +3,8 @@ import * as HttpStatusCodes from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { z } from "zod";
 
+import { authMiddleware } from "@/middlewares/auth.middleware";
+
 import {
   errorMessageSchema,
   getPaginatedSchema,
@@ -20,6 +22,7 @@ export const list = createRoute({
   summary: "List jobs",
   path: "/",
   method: "get",
+  middleware: [authMiddleware],
   request: {
     query: queryParamsSchema,
   },
@@ -41,6 +44,7 @@ export const getByCompanyId = createRoute({
   summary: "Get jobs by Company ID",
   method: "get",
   path: "/company/:companyId",
+  middleware: [authMiddleware],
   request: {
     params: z.object({
       companyId: z.string().uuid("Invalid company ID"), // or z.string() if not UUID
@@ -69,9 +73,11 @@ export const getById = createRoute({
   summary: "Get job by ID",
   method: "get",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
   },
+  
   responses: {
     [HttpStatusCodes.OK]: jsonContent(job, "The job item"),
     [HttpStatusCodes.UNAUTHORIZED]: jsonContent(
@@ -91,6 +97,7 @@ export const create = createRoute({
   summary: "Create a new job",
   method: "post",
   path: "/",
+  middleware: [authMiddleware],
   request: {
     body: jsonContentRequired(jobInsertSchema, "Create job payload"),
   },
@@ -113,6 +120,7 @@ export const update = createRoute({
   summary: "Update a job",
   method: "patch",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
     body: jsonContentRequired(jobUpdateSchema, "Update job payload"),
@@ -137,6 +145,7 @@ export const remove = createRoute({
   summary: "Delete a job",
   method: "delete",
   path: "/:id",
+  middleware: [authMiddleware],
   request: {
     params: stringIdParamSchema,
   },

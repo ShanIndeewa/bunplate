@@ -42,6 +42,12 @@ export const jobInsertSchema = job
     salaryMin: z.number().nullable().optional(),
     salaryMax: z.number().nullable().optional(),
     numberOfVacancies: z.number().min(1).default(1),
+    status: jobsStatusSchema.default("open"),
+    isRemote: z.boolean().default(false),
+    jobCategoryId: z.string().nullable().optional(),
+    location: z.string().nullable().optional(),
+    experienceRequired: z.string().nullable().optional(),
+    skills: z.any().nullable().optional(),
     closingDate: z.preprocess((val) => {
       if (typeof val === "string" && val) return new Date(val);
       return val;

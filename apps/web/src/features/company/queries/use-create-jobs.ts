@@ -24,7 +24,17 @@ export const useCreateJob = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Failed to create job");
+        console.error("Job creation error:", errorData);
+        
+        // Handle 422 validation errors
+        if (response.status === 422 && Array.isArray((errorData as any).errors)) {
+          const fieldErrors = (errorData as any).errors
+            .map((e: any) => `${e.path}: ${e.message}`)
+            .join("\n");
+          throw new Error(`Validation failed:\n${fieldErrors}`);
+        }
+        
+        throw new Error((errorData as any).message || "Failed to create job");
       }
 
       const data = await response.json();
