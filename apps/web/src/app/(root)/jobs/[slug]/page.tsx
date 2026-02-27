@@ -2,7 +2,7 @@
 type Props = { params: { slug: string } };
 import JobDetails from "@/features/company/components/job-details";
 
-export default function RoomDetailsPage({ params }: Props) {
-  const { slug } = params;
+export default async function RoomDetailsPage({ params }: Props) {
+  const { slug } = await params;
   return <JobDetails id={slug} />;
 }

@@ -60,7 +60,7 @@ export const job = z.object({
     id: z.string(),
     userId: z.string(),
     keyword: z.string(),
-    description: z.string(),
+    description: z.string().nullable(),
     createdAt: z.string(),
     updatedAt: z.string(),
   }),
