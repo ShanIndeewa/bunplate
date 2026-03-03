@@ -43,18 +43,16 @@ export const jobApplications = pgTable(
     // FKs
     organizationId: text("organization_id").references(() => organization.id),
     userId: text("user_id")
-      .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
     jobId: text("job_id")
-      .notNull()
       .references(() => jobs.id, { onDelete: "cascade" }),
 
     // Re-apply flow: increment per (jobId, userId)
-    roundNo: integer("round_no").notNull().default(1),
+      roundNo: integer("round_no").default(1),
 
     // Status & resume/media
-    status: applicationStatusEnum("status").notNull().default("submitted"),
-    adminAction: adminActionEnum("admin_action").notNull().default("access_company"),
+      status: applicationStatusEnum("status").default("submitted"),
+      adminAction: adminActionEnum("admin_action").default("access_company"),
     mediaId: text("resume_id").references(() => media.id, {
       onDelete: "set null",
     }),
@@ -76,13 +74,9 @@ export const jobApplications = pgTable(
     tags: jsonb("tags"),
 
     // Timestamps
-    submittedAt: timestamp("submitted_at", { withTimezone: true }).defaultNow(),
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+      submittedAt: timestamp("submitted_at", { withTimezone: true }).defaultNow(),
+      createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+      updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
   (t) => ({
     // One submission per (job, user, round)

@@ -9,9 +9,8 @@ export const userProfiles = pgTable("userProfile", {
   organizationId: text("organization_id").references(() => organization.id),
 
   userId: text("user_id")
-    .references(() => user.id)
-    .notNull(),
-  firstName: varchar("first_name", { length: 255 }).notNull(),
+    .references(() => user.id),
+  firstName: varchar("first_name", { length: 255 }),
   lastName: varchar("last_name", { length: 255 }),
   currentPosition: varchar("current_position", { length: 255 }),
   DOB: date("Date_of_birth"),

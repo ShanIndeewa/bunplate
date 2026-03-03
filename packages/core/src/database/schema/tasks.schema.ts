@@ -4,8 +4,8 @@ import { timestamps } from "./helpers";
 
 export const tasks = pgTable("tasks", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").notNull(),
-  done: boolean("done").notNull().default(false),
+  name: text("name"),
+  done: boolean("done").default(false),
   ...timestamps
 });
 

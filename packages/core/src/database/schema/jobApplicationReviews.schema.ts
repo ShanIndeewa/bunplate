@@ -23,10 +23,9 @@ export const jobApplicationReviews = pgTable(
       .default(sql`gen_random_uuid()`),
 
     applicationId: text("application_id")
-      .notNull()
       .references(() => jobApplications.id, { onDelete: "cascade" }),
 
-    status: applicationStatusEnum("status").notNull().default("under_review"),
+    status: applicationStatusEnum("status").default("under_review"),
 
     reviewerId: text("reviewer_id").references(() => user.id, {
       onDelete: "set null",
@@ -41,12 +40,8 @@ export const jobApplicationReviews = pgTable(
     interviewLocation: varchar("interview_location", { length: 256 }),
     meetingLink: varchar("meeting_link", { length: 512 }),
 
-    createdAt: timestamp("created_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
-    updatedAt: timestamp("updated_at", { withTimezone: true })
-      .notNull()
-      .defaultNow(),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow(),
   },
   (t) => ({
     applicationIdx: index("job_application_reviews_app_idx").on(

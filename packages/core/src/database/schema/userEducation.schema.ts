@@ -8,10 +8,9 @@ export const userEducations = pgTable("userEducation", {
     .default(sql`gen_random_uuid()`),
   organizationId: text("organization_id").references(() => organization.id),
   userId: text("user_id")
-    .references(() => user.id)
-    .notNull(),
+    .references(() => user.id),
 
-  institutionName: varchar("institution_name", { length: 255 }).notNull(),
+  institutionName: varchar("institution_name", { length: 255 }),
   degree: varchar("degree", { length: 255 }),
   fieldOfStudy: varchar("field_of_study", { length: 255 }),
   startDate: date("start_date"),

@@ -14,10 +14,10 @@ export const media = pgTable("media", {
   id: text("id")
     .primaryKey()
     .default(sql`gen_random_uuid()`),
-  url: text("url").notNull(),
-  type: mediaTypeEnum("type").notNull(),
-  filename: text("filename").notNull(),
-  size: integer("size").notNull(),
+  url: text("url"),
+  type: mediaTypeEnum("type"),
+  filename: text("filename"),
+  size: integer("size"),
 
   uploadedBy: text("uploaded_by").references(() => user.id, {
     onDelete: "set null"

@@ -37,27 +37,24 @@ export const jobs = pgTable(
       .primaryKey()
       .default(sql`gen_random_uuid()`),
     companyId: text("company_id")
-      .references(() => companies.id, { onDelete: "cascade" })
-      .notNull(),
+      .references(() => companies.id, { onDelete: "cascade" }),
     jobCategoryId: text("job_category_id").references(() => jobCategory.id, {
       onDelete: "set null",
     }),
-    title: varchar("title", { length: 255 }).notNull(),
-    description: text("description").notNull(),
+    title: varchar("title", { length: 255 }),
+    description: text("description"),
     location: varchar("location", { length: 255 }),
-    type: jobsTypeEnum("type").notNull(),
+    type: jobsTypeEnum("type"),
     salaryMin: numeric("salary_min", { precision: 10, scale: 2 }),
     salaryMax: numeric("salary_max", { precision: 10, scale: 2 }),
     experienceRequired: varchar("experience_required", { length: 100 }),
     skills: jsonb("skills"),
-    numberOfVacancies: integer("number_of_vacancies").default(1).notNull(),
+    numberOfVacancies: integer("number_of_vacancies").default(1),
     status: jobsStatusEnum("status")
-      .default(sql`'open'::jobs_status`)
-      .notNull(),
-    isRemote: boolean("is_remote").default(false).notNull(),
+      .default(sql`'open'::jobs_status`),
+    isRemote: boolean("is_remote").default(false),
     postedAt: timestamp("posted_at")
-      .default(sql`now()`)
-      .notNull(),
+      .default(sql`now()`),
     closingDate: timestamp("closing_date"),
     ...timestamps,
   },

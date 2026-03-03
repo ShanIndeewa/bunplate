@@ -9,10 +9,9 @@ export const userProjects = pgTable("userProject", {
   organizationId: text("organization_id").references(() => organization.id),
 
   userId: text("user_id")
-    .references(() => user.id)
-    .notNull(),
+    .references(() => user.id),
 
-  title: varchar("title", { length: 255 }).notNull(),
+  title: varchar("title", { length: 255 }),
   description: text("description"),
   projectUrl: varchar("project_url", { length: 500 }),
   startDate: date("start_date"),

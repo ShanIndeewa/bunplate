@@ -9,10 +9,9 @@ export const userRecommendations = pgTable("userRecommendation", {
   organizationId: text("organization_id").references(() => organization.id),
 
   userId: text("user_id")
-    .references(() => user.id)
-    .notNull(),
+    .references(() => user.id),
   recommenderUserId: text("recommender_user_id").references(() => user.id),
-  recommenderName: varchar("recommender_name", { length: 255 }).notNull(),
+  recommenderName: varchar("recommender_name", { length: 255 }),
   recommenderTitle: varchar("recommender_title", { length: 255 }),
   text: text("text"),
 

@@ -9,10 +9,9 @@ export const userSkills = pgTable("userSkill", {
   organizationId: text("organization_id").references(() => organization.id),
 
   userId: text("user_id")
-    .references(() => user.id)
-    .notNull(),
+    .references(() => user.id),
 
-  skillName: varchar("skill_name", { length: 255 }).notNull(),
+  skillName: varchar("skill_name", { length: 255 }),
   proficiency: varchar("proficiency", { length: 50 }),
 
   updatedAt: timestamp("updated_at").defaultNow(),

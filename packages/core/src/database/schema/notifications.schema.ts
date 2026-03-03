@@ -7,16 +7,14 @@ export const notifications = pgTable("notifications", {
     .primaryKey()
     .default(sql`gen_random_uuid()`),
   organizationId: text("organization_id").references(() => organization.id),
-  title: varchar("title", { length: 255 }).notNull(),
-  message: text("message").notNull(),
+  title: varchar("title", { length: 255 }),
+  message: text("message"),
   metadata: text("metadata"),
   //notificationType: text("notification_type").notNull(), // "info", "warning", "error"
-  notificationType: text("notification_type")
-    .notNull()
-    .$type<"pending" | "approved">(),
-  recipientType: varchar("recipient_type", { length: 20 }).notNull(), // "teacher", "parent", "all"
+  notificationType: text("notification_type").$type<"pending" | "approved">(),
+  recipientType: varchar("recipient_type", { length: 20 }), // "teacher", "parent", "all"
   recipientId: text("recipient_id"), // Optional - for specific recipient
   readAt: timestamp("read_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
