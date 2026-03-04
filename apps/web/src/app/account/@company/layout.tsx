@@ -11,19 +11,18 @@ type Props = {
 export default function DashboardLayout({ children }: Props) {
   return (
     <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)"
-        } as React.CSSProperties
-      }
+      style={{
+        "--sidebar-width": "calc(var(--spacing) * 72)",
+        "--header-height": "calc(var(--spacing) * 12)"
+      }}
     >
-      <AppSidebar variant="inset" />
-      <SidebarInset className="bg-background">
-        <SiteHeader />
-
-        <div className="flex flex-1 flex-col">{children}</div>
-      </SidebarInset>
+      <div style={{ display: "flex", minHeight: "100vh" }}>
+        <AppSidebar variant="inset" />
+        <SidebarInset className="bg-background" style={{ flex: 1, marginLeft: 'calc(var(--sidebar-width))' }}>
+          <SiteHeader />
+          <div className="flex flex-1 flex-col">{children}</div>
+        </SidebarInset>
+      </div>
     </SidebarProvider>
   );
 }
